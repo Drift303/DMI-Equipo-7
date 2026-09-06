@@ -2,19 +2,21 @@
   "_instructions": "Eliminen este campo cuando terminen. Conserven exactamente tres integrantes y usen SHA Git completos de commits creados por cada persona.",
   "schemaVersion": 1,
   "week": 1,
-  "teamId": "REEMPLAZAR_CON_ID_DEL_EQUIPO",
+  "teamId": "9B-E07",
   "members": [
     {
-      "studentId": "REEMPLAZAR_INTEGRANTE_1",
-      "commitShas": ["REEMPLAZAR_CON_SHA_COMPLETO"],
-      "files": ["REEMPLAZAR_CON_ARCHIVO_TRABAJADO"],
-      "tests": [],
-      "reviews": [],
-      "prediction": "REEMPLAZAR_CON_LO_QUE_ESPERABA_OBSERVAR",
-      "command": "REEMPLAZAR_CON_EL_COMANDO_EJECUTADO",
-      "observedResult": "REEMPLAZAR_CON_LO_QUE_OCURRIO",
-      "explanation": "REEMPLAZAR_CON_LA_EXPLICACION_TECNICA"
-    },
+"studentId": "3523110231",
+"commitShas": [
+"54bd4b0930a44bde8353c721ac569a13836bcebb"],
+"files": ["docs/problem-definition.md"],
+"tests": [],
+"reviews": [],
+"prediction": "Esperaba que la definición del problema quedara completa, sin indicaciones pendientes, y que los criterios de aceptación fueran observables y verificables.",
+"command": "git log -1 --oneline",
+"observedResult": "54bd4b0 (HEAD -> main, origin/main) docs: definir problema y criterios de aceptacion",
+"explanation": "Se documentó el problema que atiende CampusOps, su alcance, los actores y sus responsabilidades, el flujo principal de reporte, asignación, atención y cierre, además de tres criterios de aceptación verificables.El cambio fue confirmado mediante un commit propio y posteriormente se verificó que el commit se encontraba en main y en origin/main."
+}
+,
     {
       "studentId": "REEMPLAZAR_INTEGRANTE_2",
       "commitShas": ["REEMPLAZAR_CON_SHA_COMPLETO"],
