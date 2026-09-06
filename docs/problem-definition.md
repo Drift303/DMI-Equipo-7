@@ -36,7 +36,7 @@ El problema es importante porque se necesita organizar el proceso de atención d
 
 ## Criterios de aceptación verificables
 
-1. Dada una incidencia nueva, cuando el reportante proporciona una categoría, descripción y ubicación, entonces la incidencia queda registrada y puede ser consultada posteriormente.
-2. Dada una incidencia abierta, cuando el coordinador asigna un técnico, entonces la incidencia queda asociada al técnico responsable y puede continuar con el proceso de atención.
-3. Dada una incidencia atendida por un técnico, cuando este registra la resolución y la marca como resuelta, entonces el coordinador puede revisar la resolución y cerrar la incidencia.
+1. [Dada una incidencia nueva, cuando el reportante proporciona una categoría, descripción y ubicación, entonces la incidencia queda registrada y puede ser consultada posteriormente.]
+2. [Dada una incidencia abierta, cuando el coordinador asigna un técnico, entonces la incidencia queda asociada al técnico responsable y puede continuar con el proceso de atención.]
+3. [Dada una incidencia atendida por un técnico, cuando este registra la resolución y la marca como resuelta, entonces el coordinador puede revisar la resolución y cerrar la incidencia.]
 
