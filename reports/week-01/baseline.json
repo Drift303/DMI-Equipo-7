@@ -10,14 +10,14 @@
       "status": "fail",
       "scenarioType": "failure",
       "command": "npm run test:smoke",
-      "evidence": "REEMPLAZAR_CON_SINTOMA_OBSERVADO_Y_CAUSA_IDENTIFICADA"
+      "evidence": "La ejecución falló con 'Unable to find an element with text: CampusOps'. El árbol renderizado mostró 'CampusOps temporal'; la causa fue el cambio temporal del texto en App.tsx, que dejó de coincidir exactamente con la expectativa de course-tests/smoke.test.tsx."
     },
     {
       "id": "correccion-verificada",
       "status": "pass",
       "scenarioType": "nominal",
       "command": "npm run test:smoke",
-      "evidence": "REEMPLAZAR_CON_RESULTADO_OBSERVABLE_DESPUES_DE_CORREGIR"
+      "evidence": "Después de restaurar 'CampusOps' en App.tsx, la misma ejecución terminó en PASS: 1 suite aprobada y 1 prueba aprobada. El estado del backend también se resolvió como available."
     }
   ]
 }

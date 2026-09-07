@@ -3,18 +3,18 @@
   "schemaVersion": 1,
   "week": 1,
   "commitSha": "REEMPLAZAR_CON_SHA_DEL_COMMIT_DE_CODIGO_Y_DOCUMENTOS",
-  "decision": "REEMPLAZAR_CON_LA_DECISION_DE_ALCANCE_RIESGO_O_ACEPTACION",
+  "decision": "Priorizamos diseñar desde Semana 1 una cola persistente con operaciones idempotentes y conflictos visibles para los cambios offline, en lugar de tratar la sincronización como una mejora posterior. Esta decisión responde al riesgo prioritario de perder o duplicar cambios durante la atención técnica sin conexión y mantiene la intención del técnico sin sobrescribir una reasignación.",
   "alternatives": [
-    "REEMPLAZAR_CON_PRIMERA_ALTERNATIVA_REAL",
-    "REEMPLAZAR_CON_SEGUNDA_ALTERNATIVA_REAL"
+    "Conservar sólo el último estado local y reenviarlo al recuperar conexión, con una nueva operación generada en cada reintento.",
+    "Conservar cada operación en una cola persistente con clave de idempotencia, versión base y autor; detectar conflictos de asignación/estado y pedir resolución explícita."
   ],
-  "tradeoff": "REEMPLAZAR_CON_EL_BENEFICIO_Y_EL_COSTO_DE_LA_DECISION",
+  "tradeoff": "La cola persistente evita perder notas o cambios pendientes, y la idempotencia evita duplicar eventos cuando una respuesta se pierde; la detección de conflictos evita imponer una asignación antigua. El costo es mayor complejidad de persistencia, estados pendientes y resolución de conflictos, además de más pruebas que el enfoque de sobrescribir el último estado.",
   "requirementIds": ["AC-02", "AC-04"],
   "verification": [
     {
-      "command": "REEMPLAZAR_CON_COMANDO_EJECUTADO",
-      "result": "REEMPLAZAR_CON_RESULTADO_OBSERVADO",
-      "evidence": "REEMPLAZAR_CON_ARCHIVO_REPORTE_O_SALIDA_QUE_LO_DEMUESTRA"
+      "command": "npm test -- --ci --runInBand course-tests/public/week-01.test.ts",
+      "result": "PASS: 1 suite aprobada y 1 prueba aprobada.",
+      "evidence": "course-tests/public/week-01.test.ts comprueba que baseline.json conserva una observación fail y otra pass, y que la documentación contiene actores, probabilidad, impacto y mitigación."
     }
   ]
 }
