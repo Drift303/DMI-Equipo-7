@@ -28,14 +28,18 @@ El problema es importante porque se necesita organizar el proceso de atención d
 
 ## Flujo principal
 
-1. Reportar: El reportante registra una incidencia proporcionando la categoría, descripción y ubicación del problema.
-2. Asignar: El coordinador revisa la incidencia y asigna un técnico responsable de atenderla.
-3. Atender: El técnico inicia la atención, registra el diagnóstico, notas y evidencias, y posteriormente marca la incidencia como resuelta.
-4. Cerrar: El coordinador revisa la resolución realizada por el técnico y cierra la incidencia. Si requiere atención adicional, puede reabrir el caso cuando exista un técnico asignado.
+1. **Registrar:** La persona que detecta el problema crea una incidencia indicando su categoría, una descripción de lo ocurrido y el lugar donde se presenta.
+
+2. **Asignar:** El coordinador verifica la incidencia registrada y selecciona al técnico que será responsable de atenderla.
+
+3. **Resolver:** El técnico comienza a trabajar en la incidencia, agrega el diagnóstico, las observaciones y las evidencias necesarias. Al finalizar, registra la solución y cambia el estado a resuelta.
+
+4. **Finalizar:** El coordinador revisa el trabajo realizado y, si la solución es correcta, da por cerrada la incidencia. En caso de que el problema continúe o necesite más trabajo, puede volver a abrirla siempre que tenga un técnico asignado.
 
 ## Criterios de aceptación verificables
 
-1. Dada una incidencia nueva, cuando el reportante proporciona una categoría, descripción y ubicación, la incidencia queda registrada y puede ser consultada posteriormente.
-2. Dada una incidencia abierta, cuando el coordinador asigna un técnico, la incidencia queda asociada al técnico responsable y puede continuar con el proceso de atención.
-3. Dada una incidencia atendida por un técnico, cuando este registra la resolución y la marca como resuelta, el coordinador puede revisar la resolución y cerrar la incidencia.
+1. **Registro de incidencia:** Cuando una persona crea una incidencia proporcionando la categoría, descripción y ubicación, esta debe guardarse correctamente y estar disponible para futuras consultas.
 
+2. **Asignación de técnico:** Cuando existe una incidencia pendiente y el coordinador selecciona un técnico, esta debe quedar vinculada al responsable asignado para que pueda comenzar su atención.
+
+3. **Resolución y cierre:** Cuando el técnico termina la atención, registra la solución y marca la incidencia como resuelta, el coordinador debe poder revisar la información y cerrar el caso si la solución es adecuada.
