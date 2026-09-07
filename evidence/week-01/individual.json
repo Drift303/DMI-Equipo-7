@@ -5,39 +5,34 @@
   "teamId": "9B-E07",
   "members": [
     {
-"studentId": "3523110231",
-"commitShas": [
-"54bd4b0930a44bde8353c721ac569a13836bcebb"],
-"files": ["docs/problem-definition.md"],
-"tests": [],
-"reviews": [],
-"prediction": "Esperaba que la definición del problema quedara completa, sin indicaciones pendientes, y que los criterios de aceptación fueran observables y verificables.",
-"command": "git log -1 --oneline",
-"observedResult": "54bd4b0 (HEAD -> main, origin/main) docs: definir problema y criterios de aceptacion",
-"explanation": "Se documentó el problema que atiende CampusOps, su alcance, los actores y sus responsabilidades, el flujo principal de reporte, asignación, atención y cierre, además de tres criterios de aceptación verificables.El cambio fue confirmado mediante un commit propio y posteriormente se verificó que el commit se encontraba en main y en origin/main."
-}
-,
-    {
-      "studentId": "REEMPLAZAR_INTEGRANTE_2",
-      "commitShas": ["REEMPLAZAR_CON_SHA_COMPLETO"],
-      "files": ["REEMPLAZAR_CON_ARCHIVO_TRABAJADO"],
+      "studentId": "3523110231",
+      "commitShas": ["54bd4b0930a44bde8353c721ac569a13836bcebb"],
+      "files": ["docs/problem-definition.md"],
       "tests": [],
       "reviews": [],
-      "prediction": "REEMPLAZAR_CON_LO_QUE_ESPERABA_OBSERVAR",
-      "command": "REEMPLAZAR_CON_EL_COMANDO_EJECUTADO",
-      "observedResult": "REEMPLAZAR_CON_LO_QUE_OCURRIO",
-      "explanation": "REEMPLAZAR_CON_LA_EXPLICACION_TECNICA"
+      "prediction": "Esperaba que la definición del problema quedara completa, sin indicaciones pendientes, y que los criterios de aceptación fueran observables y verificables.",
+      "command": "git log -1 --oneline",
+      "observedResult": "54bd4b0 (HEAD -> main, origin/main) docs: definir problema y criterios de aceptacion",
+      "explanation": "Se documentó el problema que atiende CampusOps, su alcance, los actores y sus responsabilidades, el flujo principal de reporte, asignación, atención y cierre, además de tres criterios de aceptación verificables. El cambio fue confirmado mediante un commit propio y posteriormente se verificó que el commit se encontraba en main y en origin/main."
     },
     {
-      "studentId": "REEMPLAZAR_INTEGRANTE_3",
-      "commitShas": ["REEMPLAZAR_CON_SHA_COMPLETO"],
-      "files": ["REEMPLAZAR_CON_ARCHIVO_TRABAJADO"],
+      "studentId": "3523110159",
+      "commitShas": [
+        "a37a682b26a4f092ce98e75abd8f5b5afb27751b",
+        "ccc515d987b7c1e5d8de5c2488612d2fbd09d362"
+      ],
+      "files": [
+        "docs/risk-register.md",
+        "docs/problem-definition.md",
+        "evidence/week-01/engineering.json",
+        "reports/week-01/baseline.json"
+      ],
       "tests": [],
       "reviews": [],
-      "prediction": "REEMPLAZAR_CON_LO_QUE_ESPERABA_OBSERVAR",
-      "command": "REEMPLAZAR_CON_EL_COMANDO_EJECUTADO",
-      "observedResult": "REEMPLAZAR_CON_LO_QUE_OCURRIO",
-      "explanation": "REEMPLAZAR_CON_LA_EXPLICACION_TECNICA"
+      "prediction": "Esperaba que el registro de riesgos quedara con exactamente tres riesgos priorizados, cada uno con probabilidad, impacto, mitigación y forma de comprobarla, y que la evidencia de ingeniería referenciara una decisión con al menos dos alternativas reales.",
+      "command": "git log -1 --oneline",
+      "observedResult": "ccc515d (HEAD -> main, origin/main) docs: registrar evidencia de semana 1",
+      "explanation": "Se completó el registro de riesgos con tres riesgos ordenados por prioridad (pérdida/duplicación de operaciones offline, acceso fuera de perfil, y falla en captura de ubicación/foto), cada uno con su mitigación y forma de comprobación. También se llenó engineering.json con la decisión de usar una cola persistente con idempotencia y detección de conflictos frente a la alternativa de sobrescribir el último estado, y baseline.json con la evidencia narrativa de la falla controlada. El cambio fue confirmado mediante dos commits propios verificados en main y origin/main."
     }
   ]
 }
