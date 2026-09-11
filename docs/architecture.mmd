@@ -1,0 +1,24 @@
+flowchart LR
+  UI[UI\nApp.tsx\nlista y detalle]
+  APP[Application\ncasos de uso]
+  DOMAIN[Domain\nIncident + IncidentRepository]
+  INFRA[Infrastructure\nFakeIncidentRepository]
+  SESSION[Sesion\nlimite previsto]
+  STORAGE[Persistencia\nlimite previsto]
+  LOCATION[Proveedor de ubicacion\nadaptador futuro]
+  REPORTER[Reportante]
+  TECHNICIAN[Tecnico]
+  COORDINATOR[Coordinador]
+
+  REPORTER --> UI
+  TECHNICIAN --> UI
+  COORDINATOR --> UI
+  UI --> APP
+  APP --> DOMAIN
+  INFRA -. implementa .-> DOMAIN
+  APP -. coordina .-> SESSION
+  INFRA -. futuro .-> STORAGE
+  INFRA -. futuro .-> LOCATION
+
+  classDef boundary fill:#e8f0f7,stroke:#2f5d7e,color:#152b3a;
+  class UI,APP,DOMAIN,INFRA boundary;
