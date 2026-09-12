@@ -3,7 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
 import type { Incident } from './src/campusops/domain/incidents';
-import { checkBackendHealth } from './src/campusops/app/health';
+import { checkBackendHealth } from './src/campusops/application/health';
 import { incidentUseCases } from './src/campusops/infrastructure/dependencies';
 
 export default function App() {

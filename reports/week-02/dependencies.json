@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "week": 2,
+  "commitSha": "6f10f60794133f2e4dae0985d64bfab16275734b",
+  "generatedAt": "2026-09-10T19:02:57-06:00",
+  "checks": [
+    {
+      "id": "arquitectura-ausente",
+      "status": "fail",
+      "scenarioType": "failure",
+      "command": "npm test -- --ci --runInBand course-tests/public/week-02.test.ts",
+      "evidence": "Antes de agregar los entregables de Semana 2, la prueba terminó con ENOENT porque no existía docs/architecture.mmd. El estado inicial no tenía ADR ni límites de arquitectura implementados."
+    },
+    {
+      "id": "limites-documentados",
+      "status": "pass",
+      "scenarioType": "nominal",
+      "command": "npm test -- --ci --runInBand course-tests/public/week-02.test.ts",
+      "evidence": "Después de agregar el ADR y el diagrama, la suite pública terminó PASS: 1 suite y 1 prueba aprobadas. El diagrama contiene UI, application, domain e infrastructure y no declara una flecha directa UI hacia infrastructure."
+    },
+    {
+      "id": "toolchain-arquitectura",
+      "status": "pass",
+      "scenarioType": "boundary",
+      "command": "npm run typecheck && npm run lint && npm run test:smoke",
+      "evidence": "TypeScript, ESLint y el smoke test terminaron correctamente después de conectar la UI con los casos de uso y el fake determinista."
+    }
+  ]
+}

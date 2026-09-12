@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "week": 2,
+  "commitSha": "6f10f60794133f2e4dae0985d64bfab16275734b",
+  "decision": "Elegimos separar UI, application, domain e infrastructure mediante el contrato IncidentRepository. La UI solicita lista y detalle a casos de uso; el dominio define el modelo y el contrato; infrastructure aporta un fake determinista. La decisión permite cambiar el proveedor sin editar las pantallas y mantiene el flujo comprobable sin red.",
+  "alternatives": [
+    "Conectar App.tsx directamente con un repositorio concreto o con una API. Reduce archivos al inicio, pero acopla la presentación al transporte y hace más costoso probar o cambiar el proveedor.",
+    "Usar límites explícitos con casos de uso y un contrato de dominio implementado por un fake en memoria. Agrega una interfaz y composición, pero permite pruebas deterministas y sustituir infraestructura sin rehacer la UI."
+  ],
+  "tradeoff": "La separación aumenta la cantidad de archivos y exige mantener un contrato, pero facilita probar la lista y el detalle sin red y reduce el costo de cambiar el fake por persistencia o API. Aceptamos esa complejidad porque el producto crecerá hacia sesión, almacenamiento y ubicación.",
+  "requirementIds": ["AC-02", "AC-03", "AC-04"],
+  "verification": [
+    {
+      "command": "npm test -- --ci --runInBand course-tests/public/week-02.test.ts",
+      "result": "PASS: 1 suite aprobada y 1 prueba aprobada.",
+      "evidence": "course-tests/public/week-02.test.ts valida los cuatro límites del diagrama y rechaza una flecha directa UI hacia infrastructure."
+    },
+    {
+      "command": "npm run typecheck; npm run test:smoke",
+      "result": "PASS: TypeScript sin errores y smoke test aprobado.",
+      "evidence": "App.tsx muestra la lista y permite abrir el detalle; el smoke conserva CampusOps y el estado available del backend."
+    }
+  ]
+}

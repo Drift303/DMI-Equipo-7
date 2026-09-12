@@ -1,0 +1,53 @@
+{
+  "_instructions": "Completen cada registro con la aportacion real de la persona. No inventen pruebas, revisiones ni commits.",
+  "schemaVersion": 1,
+  "week": 2,
+  "teamId": "9B-E07",
+  "members": [
+    {
+      "studentId": "3523110231",
+      "commitShas": [],
+      "files": [],
+      "tests": [],
+      "reviews": [],
+      "prediction": "PENDIENTE: confirmar la aportacion real de Angel.",
+      "command": "PENDIENTE",
+      "observedResult": "PENDIENTE",
+      "explanation": "PENDIENTE: no se registra una aportacion sin confirmacion del integrante."
+    },
+    {
+      "studentId": "3523110495",
+      "commitShas": [],
+      "files": [],
+      "tests": [],
+      "reviews": [],
+      "prediction": "PENDIENTE: confirmar la aportación real de Vanessa.",
+      "command": "PENDIENTE",
+      "observedResult": "PENDIENTE",
+      "explanation": "PENDIENTE: Vanessa debe agregar su commit, archivos, prueba o revisión y resultado real."
+    },
+    {
+      "studentId": "3523110159",
+      "commitShas": ["6f10f60794133f2e4dae0985d64bfab16275734b"],
+      "files": [
+        "App.tsx",
+        "docs/adr/ADR-001-architecture.md",
+        "docs/architecture.mmd",
+        "src/campusops/domain/incidents.ts",
+        "src/campusops/infrastructure/fakeIncidentRepository.ts",
+        "src/campusops/infrastructure/dependencies.ts"
+      ],
+      "tests": [
+        "npm run typecheck",
+        "npm run lint",
+        "npm run test:smoke",
+        "npm test -- --ci --runInBand course-tests/public/week-02.test.ts"
+      ],
+      "reviews": [],
+      "prediction": "Esperaba que la UI mostrara una lista y detalle de incidencias sintéticas, que la infraestructura pudiera sustituirse mediante un contrato de dominio y que no existiera una dependencia directa de UI hacia infrastructure.",
+      "command": "npm run typecheck; npm run lint; npm run test:smoke; npm test -- --ci --runInBand course-tests/public/week-02.test.ts",
+      "observedResult": "TypeScript, ESLint, el smoke test y la prueba pública de arquitectura terminaron correctamente.",
+      "explanation": "Implementé el esqueleto de lista y detalle, el modelo Incident, el contrato IncidentRepository, el fake determinista y la composición de dependencias. También documenté la decisión y los límites en el ADR y el diagrama; las pruebas confirmaron que la UI no depende directamente de infrastructure y que se conserva el comportamiento de Semana 1."
+    }
+  ]
+}
