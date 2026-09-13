@@ -2,7 +2,7 @@
   "_instructions": "Eliminen este campo cuando terminen. Comparen alternativas reales y relacionen la decisión con una comprobación ejecutada.",
   "schemaVersion": 1,
   "week": 1,
-  "commitSha": "374920d135f9fbeda0535588091ed72b92d429ce",
+  "commitSha": "8ce2c681b2e8283d9cd33ad08b64a7c638684854",
   "decision": "Priorizamos diseñar desde Semana 1 una cola persistente con operaciones idempotentes y conflictos visibles para los cambios offline, en lugar de tratar la sincronización como una mejora posterior. Esta decisión responde al riesgo prioritario de perder o duplicar cambios durante la atención técnica sin conexión y mantiene la intención del técnico sin sobrescribir una reasignación.",
   "alternatives": [
     "Conservar sólo el último estado local y reenviarlo al recuperar conexión, con una nueva operación generada en cada reintento.",

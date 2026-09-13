@@ -2,7 +2,7 @@
   "_instructions": "Eliminen este campo cuando terminen. Los demás campos deben contener evidencia real y commitSha debe ser un SHA Git completo de 40 caracteres.",
   "schemaVersion": 1,
   "week": 1,
-  "commitSha": "374920d135f9fbeda0535588091ed72b92d429ce",
+  "commitSha": "8ce2c681b2e8283d9cd33ad08b64a7c638684854",
   "generatedAt": "2026-09-10T17:05:24-06:00",
   "checks": [
     {
