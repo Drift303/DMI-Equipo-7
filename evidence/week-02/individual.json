@@ -4,17 +4,23 @@
   "week": 2,
   "teamId": "9B-E07",
   "members": [
-    {
-      "studentId": "3523110231",
-      "commitShas": [],
-      "files": [],
-      "tests": [],
-      "reviews": [],
-      "prediction": "PENDIENTE: confirmar la aportacion real de Angel.",
-      "command": "PENDIENTE",
-      "observedResult": "PENDIENTE",
-      "explanation": "PENDIENTE: no se registra una aportacion sin confirmacion del integrante."
-    },
+{
+  "studentId": "3523110231",
+  "commitShas": ["SHA_REAL"],
+  "files": [
+    "src/campusops/domain/incidents.ts",
+    "src/campusops/infrastructure/fakeIncidentRepository.ts"
+  ],
+  "tests": [
+    "npm run typecheck",
+    "npm test -- --ci --runInBand course-tests/public/week-02.test.ts"
+  ],
+  "reviews": [],
+  "prediction": "Que el modelo Incident aceptara solamente incidencias con ID, título, descripción y ubicación no vacíos, además de categoría y estado válidos. Que el repositorio ficticio devolviera incidencias deterministas válidas y que getById devolviera null para un ID vacío o inexistente.",
+  "command": "npm run typecheck; npm test -- --ci --runInBand course-tests/public/week-02.test.ts",
+  "observedResult": "npm run typecheck terminó sin errores. npm test -- --ci --runInBand course-tests/public/week-02.test.ts terminó con PASS: 1 suite aprobada y 1 prueba aprobada.",
+  "explanation": "Agregué la validación isValidIncident al dominio para comprobar campos obligatorios, categorías y estados permitidos. Mejoré los datos ficticios del repositorio y validé sus fixtures al inicializarlo. getById normaliza el ID y devuelve null cuando está vacío o no existe."
+},
     {
       "studentId": "3523110495",
       "commitShas": ["2dcc673d01239aa6407854404563c16728f73556"],
