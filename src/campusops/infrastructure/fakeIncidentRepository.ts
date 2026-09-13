@@ -1,4 +1,8 @@
-import type { IncidentRepository, Incident } from '../domain/incidents';
+import {
+  isValidIncident,
+  type Incident,
+  type IncidentRepository,
+} from '../domain/incidents';
 
 const incidents: readonly Incident[] = [
   {
@@ -25,14 +29,36 @@ const incidents: readonly Incident[] = [
     locationLabel: 'Edificio C, aula 14',
     status: 'in_progress',
   },
+  {
+    id: 'INC-004',
+    title: 'Luz de emergencia agotada',
+    description: 'La luminaria de emergencia del acceso norte requiere reemplazo.',
+    category: 'safety',
+    locationLabel: 'Edificio D, acceso norte',
+    status: 'resolved',
+  },
 ];
+
+function requireValidFixtures(items: readonly Incident[]): readonly Incident[] {
+  if (!items.every(isValidIncident)) {
+    throw new Error('Fake incident fixtures must satisfy the Incident domain model.');
+  }
+  return items;
+}
+
+const validIncidents = requireValidFixtures(incidents);
 
 export class FakeIncidentRepository implements IncidentRepository {
   async list(): Promise<readonly Incident[]> {
-    return incidents;
+    return validIncidents;
   }
 
   async getById(id: string): Promise<Incident | null> {
-    return incidents.find((incident) => incident.id === id) ?? null;
+    const normalizedId = id.trim();
+    if (normalizedId.length === 0) {
+      return null;
+    }
+
+    return validIncidents.find((incident) => incident.id === normalizedId) ?? null;
   }
 }
