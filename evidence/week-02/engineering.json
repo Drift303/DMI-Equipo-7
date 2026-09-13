@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "week": 2,
-  "commitSha": "6f10f60794133f2e4dae0985d64bfab16275734b",
+  "commitSha": "a72188de1e07d07e0ff89f7041851984f03062cf",
   "decision": "Elegimos separar UI, application, domain e infrastructure mediante el contrato IncidentRepository. La UI solicita lista y detalle a casos de uso; el dominio define el modelo y el contrato; infrastructure aporta un fake determinista. La decisión permite cambiar el proveedor sin editar las pantallas y mantiene el flujo comprobable sin red.",
   "alternatives": [
     "Conectar App.tsx directamente con un repositorio concreto o con una API. Reduce archivos al inicio, pero acopla la presentación al transporte y hace más costoso probar o cambiar el proveedor.",

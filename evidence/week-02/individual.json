@@ -6,7 +6,7 @@
   "members": [
 {
   "studentId": "3523110231",
-  "commitShas": ["SHA_REAL"],
+  "commitShas": ["b10f907d1eb442175272fb2215f82b0b3cd08c72"],
   "files": [
     "src/campusops/domain/incidents.ts",
     "src/campusops/infrastructure/fakeIncidentRepository.ts"
