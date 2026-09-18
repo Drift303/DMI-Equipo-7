@@ -1,0 +1,59 @@
+name: Week 02 - App Shell and Manifest
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: week-02-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout exact commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 2   (aqui esta la parte que dijo pacheco que agregaramos)
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Reproducible setup
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Production build
+        run: npm run build
+
+      - name: Automated tests
+        run: npm run test --if-present -- --run
+
+      - name: Project verification
+        run: make verify
+
+      - name: Public Week 02 checks
+        shell: bash
+        run: bash public-tests/check.sh
+
+      - name: Upload academic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: academic-evidence-w02-shell-manifest
+          if-no-files-found: ignore
+          path: |
+            reports/
+            evaluation-result.json
+            coverage/
+            test-results/
