@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "week": 3,
+  "commitSha": "6c83d98a5fe39ab7eb7f5493579089e04847f8b3",
+  "decision": "Priorizamos un modelo de amenazas alineado con controles comprobables en CI: validación de permisos, auditoría de secretos y verificación de integridad del flujo de incidencias. La decisión evita tratar la seguridad como una nota documental aislada y conecta cada riesgo con evidencia ejecutable.",
+  "alternatives": [
+    "Dejar el modelo de amenazas como un documento redactado sin relación con pruebas ni controles automáticos.",
+    "Crear un modelo con activos, amenazas y controles ya conectados a validaciones reproducibles en CI y a pruebas de seguridad explícitas."
+  ],
+  "tradeoff": "La segunda alternativa exige más disciplina en la revisión del repositorio y un conjunto de comprobaciones, pero reduce el riesgo de que la seguridad quede solo en teoría. Aceptamos esa sobrecarga porque la confianza del sistema depende de detectar accesos indebidos, fugas de datos y credenciales antes de que el daño llegue al usuario.",
+  "requirementIds": ["AC-02", "AC-03", "AC-04"],
+  "verification": [
+    {
+      "command": "npm test -- --ci --runInBand course-tests/public/week-03.test.ts",
+      "result": "PASS: 1 suite aprobada y 2 pruebas aprobadas.",
+      "evidence": "La prueba pública compreba que el workflow exista, que use Node 22, y que el modelo de amenazas contenga los conceptos de activo, amenaza, control y verificación."
+    },
+    {
+      "command": "python tools/course_public_evaluator.py --week 3 --mode public",
+      "result": "PASS: los archivos obligatorios y la estructura de evidencia se validan sin errores.",
+      "evidence": "El evaluador confirma que el workflow, threat-model y reportes contienen la estructura mínima y no hay secretos ni bypasses en la integración."
+    }
+  ]
+}

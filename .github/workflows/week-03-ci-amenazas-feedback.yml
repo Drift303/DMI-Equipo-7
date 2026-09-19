@@ -1,0 +1,59 @@
+name: Week 03 - CI and threat model feedback
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - week-03-final
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: week-03-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Reproducible setup
+        run: make setup
+
+      - name: Typecheck the project
+        run: npm run typecheck
+
+      - name: Verify lint and smoke checks
+        run: make verify
+
+      - name: Security audit
+        run: npm run audit:ci
+
+      - name: Week 03 verification
+        run: make verify-week-03
+
+      - name: Public Week 03 checks
+        run: make public-test-week-03
+
+      - name: Upload academic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: academic-evidence-week-03
+          if-no-files-found: warn
+          path: |
+            reports/week-03/**
+            evidence/week-03/**

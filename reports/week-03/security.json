@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "week": 3,
+  "commitSha": "6c83d98a5fe39ab7eb7f5493579089e04847f8b3",
+  "generatedAt": "2026-09-18T00:00:00Z",
+  "checks": [
+    {
+      "id": "workflow-present",
+      "status": "pass",
+      "scenarioType": "boundary",
+      "command": "test -f .github/workflows/week-03-ci-amenazas-feedback.yml",
+      "evidence": "El workflow de la semana 3 existe y define permisos de lectura y validaciones con Node 22."
+    },
+    {
+      "id": "secret-scan",
+      "status": "pass",
+      "scenarioType": "failure",
+      "command": "python tools/course_public_evaluator.py --week 3 --mode verify --execute-toolchain",
+      "evidence": "La comprobación de secretos no encontró claves privadas, tokens de GitHub ni credenciales AWS en el repositorio."
+    },
+    {
+      "id": "typecheck-and-smoke",
+      "status": "pass",
+      "scenarioType": "nominal",
+      "command": "npm run typecheck && npm run test:smoke",
+      "evidence": "La validación de TypeScript y el smoke test del proyecto quedan en estado correcto cuando el flujo de CI no se invalida."
+    }
+  ]
+}
