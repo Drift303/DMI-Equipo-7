@@ -36,14 +36,19 @@
     },
     {
         "studentId": "3523110495",
-        "commitShas": [],
-        "files": [],
-        "tests": [],
+        "commitShas": ["268ebbf048a29ab814e13d4001eb0a1504691c35"],
+        "files": [
+          "course-tests/evidence/week-01/engineering.json",
+          "evidence/week-03/engineering.json"
+        ],
+        "tests": [
+          "python tools/course_public_evaluator.py --week 3 --mode verify --execute-toolchain"
+        ],
         "reviews": [],
-        "prediction": "PENDIENTE: confirmar la aportación real del integrante.",
-        "command": "PENDIENTE",
-        "observedResult": "PENDIENTE",
-        "explanation": "PENDIENTE: no se registra una aportación sin confirmación del integrante."
+        "prediction": "Se esperaba que el evaluador detectara el dato que simula una clave secreta y marcara la prueba como fallida o mostrara un error indicando que se encontró un posible secreto",
+        "command": "python tools/course_public_evaluator.py --week 3 --mode verify --execute-toolchain ",
+        "observedResult": "1 suite ejecutada correctamente y 2 pruebas superadas",
+        "explanation": "Se agregó un valor de prueba que simula una clave secreta dentro de course-tests/ y se ejecutó el evaluador de la Semana 3 para comprobar que el sistema detectara el posible secreto"
     }
     
   ]
