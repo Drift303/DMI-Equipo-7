@@ -15,3 +15,5 @@ test('renders the reproducible baseline and resolves backend state', async () =>
   expect(view.getByText('CampusOps')).toBeTruthy();
   await waitFor(() => expect(view.getByTestId('backend-status').props.children.join('')).toContain('available'));
 });
+
+ 
