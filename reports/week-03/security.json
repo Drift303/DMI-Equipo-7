@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "week": 3,
-  "commitSha": "6c83d98a5fe39ab7eb7f5493579089e04847f8b3",
-  "generatedAt": "2026-09-18T00:00:00Z",
+  "commitSha": "51558fb72d3cf0ab002bebc7641c9fc9c1051cb4",
+  "generatedAt": "2026-09-21T23:00:00-06:00",
   "checks": [
     {
       "id": "workflow-present",
@@ -24,6 +24,20 @@
       "scenarioType": "nominal",
       "command": "npm run typecheck && npm run test:smoke",
       "evidence": "La validación de TypeScript y el smoke test del proyecto quedan en estado correcto cuando el flujo de CI no se invalida."
+    },
+    {
+      "id": "toolchain-missing-dependencies",
+      "status": "fail",
+      "scenarioType": "failure",
+      "command": "python tools/course_public_evaluator.py --week 3 --mode verify --execute-toolchain",
+      "evidence": "El evaluador registró WinError 2 al ejecutar typecheck, lint, audit:ci y test:smoke porque las dependencias locales no estaban instaladas; el diagnóstico identifica la preparación incompleta del entorno como causa."
+    },
+    {
+      "id": "toolchain-recovered",
+      "status": "pass",
+      "scenarioType": "nominal",
+      "command": "npm run typecheck; npm run lint; npm run test:smoke; npm run audit:ci",
+      "evidence": "Después de ejecutar npm ci, typecheck y lint terminaron sin errores, el smoke test pasó con 1 prueba y audit:ci no encontró vulnerabilidades críticas; las dos vulnerabilidades reportadas fueron de severidad alta."
     }
   ]
 }

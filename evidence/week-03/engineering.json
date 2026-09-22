@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "week": 3,
-  "commitSha": "6c83d98a5fe39ab7eb7f5493579089e04847f8b3",
+  "commitSha": "51558fb72d3cf0ab002bebc7641c9fc9c1051cb4",
   "decision": "Priorizamos un modelo de amenazas alineado con controles comprobables en CI: validación de permisos, auditoría de secretos y verificación de integridad del flujo de incidencias. La decisión evita tratar la seguridad como una nota documental aislada y conecta cada riesgo con evidencia ejecutable.",
   "alternatives": [
     "Dejar el modelo de amenazas como un documento redactado sin relación con pruebas ni controles automáticos.",
