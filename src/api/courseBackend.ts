@@ -11,7 +11,7 @@ export async function getBackendHealth(
 ): Promise<BackendHealth> {
   const response = await fetch(`${baseUrl}/health`);
   if (!response.ok) {
-    throw new Error(`Backend health failed with ${response.status}`);
+    throw new Error('No fue posible consultar el servicio');
   }
   const payload: unknown = await response.json();
   if (
@@ -22,7 +22,7 @@ export async function getBackendHealth(
     !('contractVersion' in payload) ||
     payload.contractVersion !== 1
   ) {
-    throw new Error('Backend health contract mismatch');
+    throw new Error('La respuesta del servicio no es válida');
   }
   return payload as BackendHealth;
 }

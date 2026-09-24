@@ -13,7 +13,41 @@ function pending(name: string): never {
 }
 
 export function redactForTelemetry(_input: unknown): unknown {
-  return pending('redactForTelemetry');
+  const sensitiveKeys = new Set([
+    'authorization',
+    'password',
+    'token',
+    'accesstoken',
+    'refreshtoken',
+    'email',
+    'displayname',
+    'name',
+    'userid',
+    'reporterid',
+    'technicianid',
+    'assignedtechnicianid',
+    'location',
+    'latitude',
+    'longitude',
+    'photos',
+    'evidence',
+    'internalcomments',
+    'assignmenthistory',
+  ]);
+
+  const normalizeKey = (key: string) => key.toLowerCase().replace(/[_-]/g, '');
+  const redact = (value: unknown): unknown => {
+    if (Array.isArray(value)) return value.map(redact);
+    if (typeof value !== 'object' || value === null) return value;
+
+    const result: Record<string, unknown> = {};
+    for (const [key, child] of Object.entries(value)) {
+      result[key] = sensitiveKeys.has(normalizeKey(key)) ? '[REDACTED]' : redact(child);
+    }
+    return result;
+  };
+
+  return redact(_input);
 }
 
 export function parseRemoteResource(_input: unknown): ParseResult {

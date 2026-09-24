@@ -21,7 +21,7 @@ async function readJson(request) {
   let bytes = 0;
   for await (const chunk of request) {
     bytes += chunk.length;
-    if (bytes > 131072) throw new Error('request too large for teaching fixture');
+    if (bytes > 131072) throw new Error('request too large');
     chunks.push(chunk);
   }
   return JSON.parse(Buffer.concat(chunks).toString('utf8') || '{}');
