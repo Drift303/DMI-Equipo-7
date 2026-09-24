@@ -6,10 +6,36 @@ export type BackendHealth = Readonly<{
 
 const DEFAULT_URL = 'http://127.0.0.1:4310';
 
+/** Rejects unsafe endpoint configuration before it can reach logs or network requests. */
+export function resolveBackendUrl(
+  configuredUrl = process.env.EXPO_PUBLIC_COURSE_BACKEND_URL,
+): string {
+  const candidate = configuredUrl?.trim() || DEFAULT_URL;
+
+  try {
+    const url = new URL(candidate);
+    if (
+      (url.protocol !== 'http:' && url.protocol !== 'https:')
+      || url.username.length > 0
+      || url.password.length > 0
+    ) {
+      throw new Error('unsafe backend URL');
+    }
+    return url.toString().replace(/\/$/, '');
+  } catch {
+    throw new Error('Backend URL configuration is invalid');
+  }
+}
+
 export async function getBackendHealth(
-  baseUrl = process.env.EXPO_PUBLIC_COURSE_BACKEND_URL ?? DEFAULT_URL,
+  baseUrl = resolveBackendUrl(),
 ): Promise<BackendHealth> {
-  const response = await fetch(`${baseUrl}/health`);
+  let response: Response;
+  try {
+    response = await fetch(`${resolveBackendUrl(baseUrl)}/health`);
+  } catch {
+    throw new Error('Backend health request failed');
+  }
   if (!response.ok) {
     throw new Error(`Backend health failed with ${response.status}`);
   }

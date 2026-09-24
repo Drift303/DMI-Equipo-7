@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "week": 3,
+  "mode": "public",
+  "commitSha": "c863590c9f3cd859ba6575022c9d57982809e7f5",
+  "evaluatedAt": "2026-09-20T01:46:59.660800+00:00",
+  "status": "fail",
+  "checks": [
+    {
+      "id": "base_files",
+      "status": "pass",
+      "detail": "missing=[]"
+    },
+    {
+      "id": "react_native_profile",
+      "status": "pass",
+      "detail": "missing packages=[]"
+    },
+    {
+      "id": "toolchain_scripts",
+      "status": "pass",
+      "detail": "missing scripts=[]"
+    },
+    {
+      "id": "workflow_integrity",
+      "status": "pass",
+      "detail": "bypass markers=[]"
+    },
+    {
+      "id": "secret_scan",
+      "status": "pass",
+      "detail": "hits=[]"
+    },
+    {
+      "id": "required_evidence",
+      "status": "pass",
+      "detail": "missing/empty=[]"
+    },
+    {
+      "id": "schema:reports/week-03/security.json",
+      "status": "fail",
+      "detail": "evidence-only commit; invalid changes=['.github/workflows/week-03-ci-amenazas-feedback.yml', 'docs/threat-model.md']"
+    },
+    {
+      "id": "schema:evidence/week-03/engineering.json",
+      "status": "fail",
+      "detail": "evidence-only commit; invalid changes=['.github/workflows/week-03-ci-amenazas-feedback.yml', 'docs/threat-model.md']"
+    },
+    {
+      "id": "schema:evidence/week-03/individual.json",
+      "status": "fail",
+      "detail": "3523110231: at least one authored commit SHA is required"
+    }
+  ]
+}
