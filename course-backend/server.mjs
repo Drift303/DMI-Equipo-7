@@ -9,7 +9,6 @@ const completedOperations = new Map();
 function send(response, status, body, headers = {}) {
   const value = typeof body === 'string' ? body : JSON.stringify(body);
   response.writeHead(status, {
-    'access-control-allow-origin': '*',
     'content-type': typeof body === 'string' ? 'application/json' : 'application/json; charset=utf-8',
     ...headers,
   });
