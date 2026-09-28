@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "week": 4,
+  "teamId": "9B-E07",
+  "members": [
+    {
+      "studentId": "3523110159",
+      "commitShas": ["e3c3349f8906de6f895322a43655bff7c73e0887"],
+      "files": ["src/course-evaluation/index.ts", "course-tests/week-04.security.test.ts"],
+      "tests": ["npm test -- --ci --runInBand course-tests/public/week-04.test.ts course-tests/week-04.security.test.ts"],
+      "reviews": [],
+      "prediction": "Esperaba que los campos sensibles dejaran de aparecer completos en objetos anidados y que la entrada permaneciera sin cambios.",
+      "command": "npm test -- --ci --runInBand course-tests/week-04.security.test.ts",
+      "observedResult": "PASS: la prueba de redacción anidada y no mutación fue aprobada.",
+      "explanation": "Se implementó la función recursiva y se comprobó el comportamiento negativo con datos ficticios."
+    },
+    {
+      "studentId": "3523110231",
+      "commitShas": ["PENDIENTE: agrega el SHA completo de tu commit (40 caracteres)"],
+      "files": ["PENDIENTE: agrega las rutas de los archivos en los que trabajaste"],
+      "tests": ["PENDIENTE: agrega el comando de prueba que ejecutaste"],
+      "reviews": ["PENDIENTE: agrega una revisión real o deja [] si no hiciste ninguna"],
+      "prediction": "PENDIENTE: explica qué esperabas comprobar antes de hacer tu trabajo.",
+      "command": "PENDIENTE: escribe el comando que ejecutaste para comprobar tu aporte.",
+      "observedResult": "PENDIENTE: escribe el resultado que observaste realmente.",
+      "explanation": "PENDIENTE: explica qué aportaste y cómo se puede verificar."
+    },
+    {
+      "studentId": "3523110495",
+      "commitShas": ["PENDIENTE: agrega el SHA completo de tu commit (40 caracteres)"],
+      "files": ["PENDIENTE: agrega las rutas de los archivos en los que trabajaste"],
+      "tests": ["PENDIENTE: agrega el comando de prueba que ejecutaste"],
+      "reviews": ["PENDIENTE: agrega una revisión real o deja [] si no hiciste ninguna"],
+      "prediction": "PENDIENTE: explica qué esperabas comprobar antes de hacer tu trabajo.",
+      "command": "PENDIENTE: escribe el comando que ejecutaste para comprobar tu aporte.",
+      "observedResult": "PENDIENTE: escribe el resultado que observaste realmente.",
+      "explanation": "PENDIENTE: explica qué aportaste y cómo se puede verificar."
+    }
+  ]
+}

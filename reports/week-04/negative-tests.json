@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "week": 4,
+  "commitSha": "e3c3349f8906de6f895322a43655bff7c73e0887",
+  "generatedAt": "2026-09-27T00:00:00-06:00",
+  "checks": [
+    {
+      "id": "public-redaction",
+      "status": "pass",
+      "scenarioType": "boundary",
+      "command": "npm test -- --ci --runInBand course-tests/public/week-04.test.ts",
+      "evidence": "La prueba pública confirmó que authorization, email, displayName, location, photos e internalComments se reemplazan y que incidentId permanece disponible."
+    },
+    {
+      "id": "nested-redaction-and-immutability",
+      "status": "pass",
+      "scenarioType": "failure",
+      "command": "npm test -- --ci --runInBand course-tests/week-04.security.test.ts",
+      "evidence": "La prueba propia confirmó la redacción de claves normalizadas dentro de objetos y listas anidadas y verificó que la entrada original no cambia."
+    },
+    {
+      "id": "toolchain",
+      "status": "pass",
+      "scenarioType": "nominal",
+      "command": "npm run typecheck && npm run lint",
+      "evidence": "TypeScript y ESLint terminaron sin errores después de conectar la sanitización con el adaptador evaluable."
+    }
+  ]
+}

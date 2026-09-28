@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "week": 4,
+  "commitSha": "e3c3349f8906de6f895322a43655bff7c73e0887",
+  "decision": "Sanitizar la telemetría en un adaptador recursivo antes de conservar o enviar errores, reemplazando por completo los valores de las claves sensibles y preservando sólo contexto técnico permitido.",
+  "alternatives": [
+    "Ocultar datos únicamente en componentes de interfaz y permitir que los logs reciban el objeto completo.",
+    "Redactar cada pantalla o llamada por separado con listas manuales de campos.",
+    "Centralizar la redacción en redactForTelemetry, aplicarla a objetos y listas anidadas y mantener la entrada inmutable."
+  ],
+  "tradeoff": "El adaptador centralizado agrega una clasificación mínima de claves y puede ocultar información útil si un campo se clasifica de forma conservadora; a cambio, reduce duplicación y evita que un camino de error olvide sanitizar un objeto anidado. El almacenamiento seguro de sesión queda como requisito de integración móvil y no se simula con secretos en el repositorio.",
+  "requirementIds": ["AC-01", "AC-02", "AC-03", "AC-04", "AC-05"],
+  "verification": [
+    {
+      "command": "npm test -- --ci --runInBand course-tests/public/week-04.test.ts course-tests/week-04.security.test.ts",
+      "result": "PASS: 2 suites y 2 pruebas aprobadas.",
+      "evidence": "La prueba pública cubre datos sensibles y contexto técnico; la prueba propia cubre estructuras anidadas, listas y no mutación."
+    },
+    {
+      "command": "npm run typecheck && npm run lint",
+      "result": "PASS: ambas comprobaciones terminan sin errores.",
+      "evidence": "La implementación mantiene el contrato TypeScript y no introduce errores de lint."
+    }
+  ]
+}
