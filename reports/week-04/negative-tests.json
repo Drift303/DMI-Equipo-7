@@ -19,11 +19,18 @@
       "evidence": "La prueba propia confirmó la redacción de claves normalizadas dentro de objetos y listas anidadas y verificó que la entrada original no cambia."
     },
     {
+      "id": "combined-week-04",
+      "status": "pass",
+      "scenarioType": "nominal",
+      "command": "npm test -- --ci --runInBand course-tests/public/week-04.test.ts course-tests/week-04.security.test.ts",
+      "evidence": "Las dos suites de Semana 4 se ejecutaron juntas y ambas terminaron correctamente."
+    },
+    {
       "id": "toolchain",
       "status": "pass",
       "scenarioType": "nominal",
       "command": "npm run typecheck && npm run lint",
-      "evidence": "TypeScript y ESLint terminaron sin errores después de conectar la sanitización con el adaptador evaluable."
+      "evidence": "TypeScript y ESLint terminaron sin errores."
     }
   ]
 }
