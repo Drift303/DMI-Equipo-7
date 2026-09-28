@@ -27,14 +27,17 @@
     },
     {
       "studentId": "3523110495",
-      "commitShas": ["PENDIENTE: agrega el SHA completo de tu commit (40 caracteres)"],
-      "files": ["PENDIENTE: agrega las rutas de los archivos en los que trabajaste"],
-      "tests": ["PENDIENTE: agrega el comando de prueba que ejecutaste"],
-      "reviews": ["PENDIENTE: agrega una revisión real o deja [] si no hiciste ninguna"],
-      "prediction": "PENDIENTE: explica qué esperabas comprobar antes de hacer tu trabajo.",
-      "command": "PENDIENTE: escribe el comando que ejecutaste para comprobar tu aporte.",
-      "observedResult": "PENDIENTE: escribe el resultado que observaste realmente.",
-      "explanation": "PENDIENTE: explica qué aportaste y cómo se puede verificar."
+      "commitShas": ["c851298dab54132e403e6c17a397eb41aecfa92a"],
+      "files": ["reports/week-04/negative-tests.json"],
+      "tests": ["npm test -- --ci --runInBand course-tests/week-04.security.test.ts",
+      "npm test -- --ci --runInBand course-tests/public/week-04.test.ts course-tests/week-04.security.test.ts",
+      "npm run typecheck",
+      "npm run lint"],
+      "reviews": [],
+      "prediction": "Esperaba comprobar que la redacción de datos sensibles funcionara también en objetos y listas anidadas, que no modificara los datos originales y que las pruebas y revisiones del proyecto terminaran sin errores.",
+      "command": "npm test -- --ci --runInBand course-tests/public/week-04.test.ts course-tests/week-04.security.test.ts",
+      "observedResult": "Las dos suites de Semana 4 pasaron correctamente, con 2 suites y 2 pruebas aprobadas. También npm run typecheck y npm run lint terminaron sin errores.",
+      "explanation": "Actualicé el registro de pruebas de Semana 4 en reports/week-04/negative-tests.json. Verifiqué la prueba de redacción de datos sensibles anidados y que la entrada original no se modificara. El aporte se puede comprobar revisando el archivo, el commit c851298dab54132e403e6c17a397eb41aecfa92a y los comandos ejecutados."
     }
   ]
 }
