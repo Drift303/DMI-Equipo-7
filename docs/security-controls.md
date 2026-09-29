@@ -4,6 +4,10 @@
 
 CampusOps puede manejar sesión, identificadores de actores, ubicación de incidencias, fotografías, evidencias, nombres, comentarios internos y respuestas de servicios externos. Estos datos no deben aparecer completos en telemetría, reportes de error ni archivos de evidencia. Los fixtures del curso son ficticios y no representan credenciales reales.
 
+### Minimización y propósito
+
+Cada flujo debe solicitar y conservar sólo el dato necesario para su propósito: la ubicación se usa para localizar una incidencia, las fotografías y evidencias para documentarla y el identificador del actor para aplicar permisos. Los datos no se reutilizan para analítica, perfiles u otros fines sin una decisión explícita. Los reportes técnicos deben preferir identificadores sintéticos de incidencia y contexto operativo mínimo en lugar de información personal o contenido libre.
+
 ## Controles implementados
 
 - `redactForTelemetry` recorre objetos y listas de forma recursiva.
@@ -16,6 +20,8 @@ CampusOps puede manejar sesión, identificadores de actores, ubicación de incid
 ## Almacenamiento y errores
 
 La información de sesión o cualquier secreto real no debe guardarse en AsyncStorage ni escribirse en el código. En una implementación móvil de producción, los secretos de sesión requieren el almacenamiento seguro provisto por la plataforma, con expiración, revocación y mínimo privilegio. Los mensajes de error deben conservar sólo códigos, estados y correlaciones sanitizadas, nunca encabezados de autorización, tokens, ubicación, fotografías o texto interno.
+
+Las respuestas de servicios externos se tratan como datos no confiables: se validan antes de mostrarse o persistirse. Al cerrar sesión, revocar acceso o eliminar una incidencia conforme a la política del producto, deben borrarse los tokens, referencias locales de evidencia y datos en caché que ya no sean necesarios. Las copias de respaldo y registros operativos deben aplicar el mismo principio de retención mínima.
 
 ## Relación con amenazas
 

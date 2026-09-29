@@ -14,17 +14,27 @@
       "observedResult": "PASS: la prueba de redacción anidada y no mutación fue aprobada.",
       "explanation": "Se implementó la función recursiva y se comprobó el comportamiento negativo con datos ficticios."
     },
-    {
-      "studentId": "3523110231",
-      "commitShas": ["PENDIENTE: agrega el SHA completo de tu commit (40 caracteres)"],
-      "files": ["PENDIENTE: agrega las rutas de los archivos en los que trabajaste"],
-      "tests": ["PENDIENTE: agrega el comando de prueba que ejecutaste"],
-      "reviews": ["PENDIENTE: agrega una revisión real o deja [] si no hiciste ninguna"],
-      "prediction": "PENDIENTE: explica qué esperabas comprobar antes de hacer tu trabajo.",
-      "command": "PENDIENTE: escribe el comando que ejecutaste para comprobar tu aporte.",
-      "observedResult": "PENDIENTE: escribe el resultado que observaste realmente.",
-      "explanation": "PENDIENTE: explica qué aportaste y cómo se puede verificar."
-    },
+{
+  "studentId": "3523110231",
+  "commitShas": [
+    "a20da7ee5052de5e1926b64f8a2aa4b451c06626"
+  ],
+  "files": [
+    "docs/security-audit.md",
+    "src/course-evaluation/index.ts",
+    "src/api/courseBackend.ts",
+    "src/api/courseBackend.test.ts"
+  ],
+  "tests": [
+    "npm run typecheck",
+    "npm test -- --ci --runInBand course-tests/public/week-04.test.ts course-tests/week-04.security.test.ts"
+  ],
+  "reviews": [],
+  "prediction": "Esperaba que los datos sensibles de telemetría se ocultaran y que la configuración del backend rechazara URLs inseguras o con credenciales embebidas.",
+  "command": "npm run typecheck; npm test -- --ci --runInBand course-tests/public/week-04.test.ts course-tests/week-04.security.test.ts",
+  "observedResult": "PASS: TypeScript terminó sin errores. PASS: las dos suites de Semana 4 aprobaron, con 2 pruebas aprobadas.",
+  "explanation": "Implementé la sanitización recursiva de telemetría para ocultar datos sensibles sin mutar la entrada. También validé la URL del backend para aceptar sólo HTTP(S) sin credenciales embebidas y añadí pruebas para comprobarlo."
+},
     {
       "studentId": "3523110495",
       "commitShas": ["c851298dab54132e403e6c17a397eb41aecfa92a"],
