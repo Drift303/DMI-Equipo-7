@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "week": 4,
-  "commitSha": "e3c3349f8906de6f895322a43655bff7c73e0887",
+  "commitSha": "302852bda47d9b147d2eb0218a4c9d042a6bf2b8",
   "decision": "Sanitizar la telemetría en un adaptador recursivo antes de conservar o enviar errores, reemplazando por completo los valores de las claves sensibles y preservando sólo contexto técnico permitido.",
   "alternatives": [
     "Ocultar datos únicamente en componentes de interfaz y permitir que los logs reciban el objeto completo.",
