@@ -57,8 +57,33 @@ export function redactForTelemetry(input: unknown): unknown {
   return input;
 }
 
-export function parseRemoteResource(_input: unknown): ParseResult {
-  return pending('parseRemoteResource');
+export function parseRemoteResource(input: unknown): ParseResult {
+  if (typeof input !== 'object' || input === null || Array.isArray(input)) {
+    return { ok: false, error: 'contract' };
+  }
+
+  const resource = input as Record<string, unknown>;
+  const validId = typeof resource.id === 'string' && resource.id.trim().length > 0;
+  const validVersion = typeof resource.version === 'number'
+    && Number.isInteger(resource.version)
+    && resource.version >= 0;
+  const validStatus = typeof resource.status === 'string' && resource.status.trim().length > 0;
+  const validPayload = resource.payload === null
+    || (typeof resource.payload === 'object' && !Array.isArray(resource.payload));
+
+  if (!validId || !validVersion || !validStatus || !validPayload) {
+    return { ok: false, error: 'contract' };
+  }
+
+  return {
+    ok: true,
+    value: {
+      id: resource.id as string,
+      version: resource.version as number,
+      status: resource.status as string,
+      payload: resource.payload as JsonObject | null,
+    },
+  };
 }
 
 export function coordinateRefresh(_events: readonly AuthEvent[]): Readonly<{
