@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "week": 5,
+  "commitSha": "50960fd7740b7b48f13429558e935478a0a54ff4",
+  "generatedAt": "2026-09-30T00:00:00-06:00",
+  "checks": [
+    {
+      "id": "nullable-payload",
+      "status": "pass",
+      "scenarioType": "boundary",
+      "command": "npm test -- --ci --runInBand course-tests/week-05.client.test.ts",
+      "evidence": "El payload nulo se acepta como DTO remoto pero se representa como error empty; no se inventan descripción, categoría ni ubicación."
+    },
+    {
+      "id": "malformed-response",
+      "status": "pass",
+      "scenarioType": "failure",
+      "command": "npm test -- --ci --runInBand course-tests/week-05.client.test.ts",
+      "evidence": "Un DTO con version textual se rechaza como error contract antes de llegar al dominio."
+    },
+    {
+      "id": "server-error",
+      "status": "pass",
+      "scenarioType": "failure",
+      "command": "npm test -- --ci --runInBand course-tests/week-05.client.test.ts",
+      "evidence": "Una respuesta HTTP 500 se representa como IncidentCloudError de tipo http y conserva status=500."
+    },
+    {
+      "id": "timeout",
+      "status": "pass",
+      "scenarioType": "failure",
+      "command": "npm test -- --ci --runInBand course-tests/week-05.client.test.ts",
+      "evidence": "La cancelación AbortError se transforma en IncidentCloudError de tipo timeout y no queda como excepción genérica."
+    },
+    {
+      "id": "backend-contracts",
+      "status": "pass",
+      "scenarioType": "boundary",
+      "command": "npm run backend:self-test",
+      "evidence": "El self-test del backend didáctico aprobó roles, conflictos, respuesta perdida, idempotencia, evidencia y geocodificación."
+    }
+  ]
+}

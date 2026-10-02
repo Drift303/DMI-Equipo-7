@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "week": 5,
+  "teamId": "9B-E07",
+  "members": [
+    {
+      "studentId": "3523110159",
+      "commitShas": [
+        "d6e14fdcd63f0924359005b5b84a267a768b4e27",
+        "50960fd7740b7b48f13429558e935478a0a54ff4"
+      ],
+      "files": [
+        "src/api/incidentCloudClient.ts",
+        "src/course-evaluation/index.ts",
+        "docs/api-contract.md"
+      ],
+      "tests": [
+        "npm test -- --ci --runInBand course-tests/public/week-05.test.ts course-tests/week-05.client.test.ts",
+        "npm run typecheck",
+        "npm run lint"
+      ],
+      "reviews": [],
+      "prediction": "Esperaba que el cliente validara las respuestas cloud y distinguiera los errores.",
+      "command": "npm test -- --ci --runInBand course-tests/public/week-05.test.ts course-tests/week-05.client.test.ts",
+      "observedResult": "PASS: 2 suites y 10 pruebas aprobadas.",
+      "explanation": "Implementé el cliente cloud, la validación del DTO remoto, el manejo de errores y la documentación del contrato."
+    },
+    {
+      "studentId": "3523110495",
+      "commitShas": [
+        "PENDIENTE sha"
+      ],
+      "files": [
+        "PENDIENETE ARCHIVO QUE MODIFICO"
+      ],
+      "tests": [
+        "PENDIENTE COMANDO_QUE_EJECUTO"
+      ],
+      "reviews": [],
+      "prediction": "PENDIENTE Qué esperaba comprobar.",
+      "command": "PENDIENTE Comando ejecutado.",
+      "observedResult": "PENDIENTE Resultado real de la prueba.",
+      "explanation": "PENDIENTE Descripción de la aportación."
+    },
+    {
+      "studentId": "3523110231",
+      "commitShas": [
+         "PENDIENTE sha"
+      ],
+      "files": [
+        "PENDIENTE ARCHIVO QUE MODIFICO"
+      ],
+      "tests": [
+        "PENDIENTE COMANDO_QUE_EJECUTO"
+      ],
+      "reviews": [],
+      "prediction": "PENDIENTE Qué esperaba comprobar.",
+      "command": "PENDIENTE Comando ejecutado.",
+      "observedResult": "PENDIENTE Resultado real de la prueba.",
+      "explanation": "PENDIENTE Descripción de la aportación."
+    }
+  ]
+}

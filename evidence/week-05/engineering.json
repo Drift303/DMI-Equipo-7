@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "week": 5,
+  "commitSha": "50960fd7740b7b48f13429558e935478a0a54ff4",
+  "decision": "Elegimos un cliente cloud separado de la interfaz, con parseRemoteResource como frontera única del sobre remoto y un mapeo posterior al modelo Incident. La composición permite activar el cliente mediante EXPO_PUBLIC_USE_CLOUD y conserva el fake determinista por defecto para desarrollo sin red.",
+  "alternatives": [
+    "Hacer fetch directamente desde App.tsx y usar cualquier objeto JSON que responda el servidor. Reduce archivos al inicio, pero mezcla transporte y presentación y permite que datos inválidos lleguen a la pantalla.",
+    "Crear un cliente HTTP con timeout, errores tipados, validación del sobre y validación del dominio antes de entregar datos a los casos de uso. Agrega una frontera y mapeo explícitos, pero permite distinguir vacío, contrato inválido, HTTP, red y timeout.",
+    "Usar únicamente el fake local y no conectar el backend didáctico. Mantiene las pruebas simples, pero no demuestra el contrato cloud ni el manejo de respuestas lentas o fallidas."
+  ],
+  "tradeoff": "Aceptamos la complejidad de un adaptador y errores tipados porque evita que una respuesta incompleta rompa la aplicación y permite repetir los escenarios sin Internet público. El fake sigue disponible por defecto para que el desarrollo y las pruebas nominales no dependan de un proceso externo.",
+  "requirementIds": ["AC-01", "AC-02", "AC-03", "AC-04", "AC-05"],
+  "verification": [
+    {
+      "command": "npm test -- --ci --runInBand course-tests/public/week-05.test.ts course-tests/week-05.client.test.ts",
+      "result": "PASS: 2 suites y 10 pruebas aprobadas.",
+      "evidence": "La suite cubre DTO válido, payload nulo, respuesta malformada, HTTP 500, timeout y separación del modelo remoto respecto del modelo de la aplicación."
+    },
+    {
+      "command": "npm run typecheck; npm run lint; npm run backend:self-test",
+      "result": "PASS: TypeScript, ESLint y self-test del backend terminaron correctamente.",
+      "evidence": "El cliente cloud compila, no introduce fetch en la interfaz y los escenarios controlados del backend permanecen reproducibles."
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "week": 5,
+  "commitSha": "50960fd7740b7b48f13429558e935478a0a54ff4",
+  "generatedAt": "2026-09-30T00:00:00-06:00",
+  "checks": [
+    {
+      "id": "remote-dto-validation",
+      "status": "pass",
+      "scenarioType": "boundary",
+      "command": "npm test -- --ci --runInBand course-tests/public/week-05.test.ts",
+      "evidence": "La prueba pública aprobó 5 casos: DTO válido, payload nulo permitido, id vacío, versión no entera y entrada nula."
+    },
+    {
+      "id": "cloud-client-success",
+      "status": "pass",
+      "scenarioType": "nominal",
+      "command": "npm test -- --ci --runInBand course-tests/week-05.client.test.ts",
+      "evidence": "El cliente separado de la interfaz transformó un sobre remoto válido al modelo Incident de la aplicación."
+    },
+    {
+      "id": "domain-separation",
+      "status": "pass",
+      "scenarioType": "boundary",
+      "command": "npm run typecheck && npm run lint",
+      "evidence": "El cliente HTTP y la composición de infraestructura compilaron y pasaron ESLint; App.tsx continúa usando casos de uso, no fetch directo."
+    }
+  ]
+}
