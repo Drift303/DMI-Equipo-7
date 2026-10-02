@@ -28,19 +28,25 @@
     {
       "studentId": "3523110495",
       "commitShas": [
-        "PENDIENTE sha"
+        "a03b21b2073ccdf29537b6097e64934a3338b1d6"
       ],
       "files": [
-        "PENDIENETE ARCHIVO QUE MODIFICO"
+        "docs/api-contract.md",
+        "reports/week-05/contract-tests.json",
+        "reports/week-05/failure-matrix.json",
+        "evidence/week-05/individual.json"
       ],
       "tests": [
-        "PENDIENTE COMANDO_QUE_EJECUTO"
+        "npm run typecheck",
+        "npm run lint",
+        "npm run backend",
+        "npm test -- --ci --runInBand course-tests/public/week-05.test.ts course-tests/week-05.client.test.ts"
       ],
       "reviews": [],
-      "prediction": "PENDIENTE Qué esperaba comprobar.",
-      "command": "PENDIENTE Comando ejecutado.",
-      "observedResult": "PENDIENTE Resultado real de la prueba.",
-      "explanation": "PENDIENTE Descripción de la aportación."
+      "prediction": "Esperaba comprobar que el contrato cloud estuviera documentado y que las validaciones y escenarios de Semana 5 pasaran correctamente",
+      "command": "npm test -- --ci --runInBand course-tests/public/week-05.test.ts course-tests/week-05.client.test.ts",
+      "observedResult": "PASS: 2 suites y 10 pruebas aprobadas. typecheck, lint y backend también finalizaron correctamente",
+      "explanation": "Documenté el contrato del cliente cloud y registré las validaciones realizadas para las respuestas válidas, payload nulo, datos malformados, timeout y error HTTP 500"
     },
     {
       "studentId": "3523110231",
