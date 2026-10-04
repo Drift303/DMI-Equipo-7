@@ -44,12 +44,40 @@ test('distingue un payload nulo válido sin inventar datos', async () => {
   await expect(client.getById(validIncident.id)).rejects.toMatchObject<Partial<IncidentCloudError>>({ kind: 'empty' });
 });
 
-test('rechaza un objeto remoto malformado', async () => {
+test.each([
+  [{ ...validIncident, version: '1' }],
+  [{ ...validIncident, payload: [] }],
+])('rechaza un objeto remoto malformado', async (malformedIncident) => {
   const client = new IncidentCloudClient({
-    fetchImpl: async () => response({ ...validIncident, version: '1' }) as Response,
+    fetchImpl: async () => response(malformedIncident) as Response,
   });
 
   await expect(client.getById(validIncident.id)).rejects.toMatchObject<Partial<IncidentCloudError>>({ kind: 'contract' });
+});
+
+test.each(['', '       ', 'short'])('no envía una creación con Idempotency-Key ausente o inválida: %p', async (idempotencyKey) => {
+  const fetchImpl = jest.fn();
+  const client = new IncidentCloudClient({ fetchImpl: fetchImpl as typeof fetch });
+
+  await expect(client.create({
+    category: 'connectivity',
+    description: 'Incidencia de prueba',
+    location: 'Zona de prueba',
+  }, idempotencyKey)).rejects.toMatchObject<Partial<IncidentCloudError>>({ kind: 'contract' });
+
+  expect(fetchImpl).not.toHaveBeenCalled();
+});
+
+test('conserva el conflicto HTTP 409 que devuelve el backend', async () => {
+  const client = new IncidentCloudClient({
+    fetchImpl: async () => response({ code: 'version_conflict', currentVersion: 2 }, 409) as Response,
+  });
+
+  await expect(client.create({
+    category: 'connectivity',
+    description: 'Incidencia de prueba',
+    location: 'Zona de prueba',
+  }, 'create-409-conflict')).rejects.toMatchObject<Partial<IncidentCloudError>>({ kind: 'http', status: 409 });
 });
 
 test('representa un error HTTP 500 sin dejar una excepción genérica', async () => {

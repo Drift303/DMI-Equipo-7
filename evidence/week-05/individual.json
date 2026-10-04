@@ -50,20 +50,22 @@
     },
     {
       "studentId": "3523110231",
-      "commitShas": [
-         "PENDIENTE sha"
-      ],
+      "commitShas": [],
       "files": [
-        "PENDIENTE ARCHIVO QUE MODIFICO"
+        "course-tests/week-05.client.test.ts",
+        "evidence/week-05/individual.json"
       ],
       "tests": [
-        "PENDIENTE COMANDO_QUE_EJECUTO"
+        "npm test -- --ci --runInBand course-tests/week-05.client.test.ts",
+        "npm run typecheck",
+        "npm run lint",
+        "npm run backend:self-test"
       ],
       "reviews": [],
-      "prediction": "PENDIENTE Qué esperaba comprobar.",
-      "command": "PENDIENTE Comando ejecutado.",
-      "observedResult": "PENDIENTE Resultado real de la prueba.",
-      "explanation": "PENDIENTE Descripción de la aportación."
+      "prediction": "Esperaba que el cliente rechazara datos remotos inválidos, no enviara operaciones con una Idempotency-Key ausente o corta y conservara los errores HTTP 409, 500 y timeout como errores distinguibles.",
+      "command": "npm test -- --ci --runInBand course-tests/week-05.client.test.ts; npm run typecheck; npm run lint; npm run backend:self-test",
+      "observedResult": "La suite del cliente terminó correctamente; npm run typecheck y npm run lint terminaron sin errores; npm run backend:self-test confirmó los contratos del backend correctamente.",
+      "explanation": "Agregué pruebas de respuesta malformada, payload nulo, Idempotency-Key ausente o inválida, conflicto HTTP 409, error HTTP 500 y timeout. La Idempotency-Key inválida se rechaza antes de llamar a fetch para evitar una operación incompleta."
     }
   ]
 }
