@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "week": 5,
-  "commitSha": "50960fd7740b7b48f13429558e935478a0a54ff4",
+  "commitSha": "c1f58d11749844ad316075818e7410d178fdac01",
   "decision": "Elegimos un cliente cloud separado de la interfaz, con parseRemoteResource como frontera única del sobre remoto y un mapeo posterior al modelo Incident. La composición permite activar el cliente mediante EXPO_PUBLIC_USE_CLOUD y conserva el fake determinista por defecto para desarrollo sin red.",
   "alternatives": [
     "Hacer fetch directamente desde App.tsx y usar cualquier objeto JSON que responda el servidor. Reduce archivos al inicio, pero mezcla transporte y presentación y permite que datos inválidos lleguen a la pantalla.",
@@ -13,12 +13,12 @@
   "verification": [
     {
       "command": "npm test -- --ci --runInBand course-tests/public/week-05.test.ts course-tests/week-05.client.test.ts",
-      "result": "PASS: 2 suites y 10 pruebas aprobadas.",
-      "evidence": "La suite cubre DTO válido, payload nulo, respuesta malformada, HTTP 500, timeout y separación del modelo remoto respecto del modelo de la aplicación."
+      "result": "PASS: 2 suites y 15 pruebas aprobadas.",
+      "evidence": "La ejecución local cubrió la suite pública de validación del DTO y la suite del cliente cloud, incluidos payload nulo, respuestas malformadas, errores HTTP y timeout."
     },
     {
       "command": "npm run typecheck; npm run lint; npm run backend:self-test",
-      "result": "PASS: TypeScript, ESLint y self-test del backend terminaron correctamente.",
+      "result": "PASS: typecheck, lint y backend:self-test terminaron correctamente.",
       "evidence": "El cliente cloud compila, no introduce fetch en la interfaz y los escenarios controlados del backend permanecen reproducibles."
     }
   ]

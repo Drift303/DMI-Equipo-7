@@ -50,7 +50,7 @@
     },
     {
       "studentId": "3523110231",
-      "commitShas": [],
+      "commitShas": ["c1f58d11749844ad316075818e7410d178fdac01"],
       "files": [
         "course-tests/week-05.client.test.ts",
         "evidence/week-05/individual.json"
