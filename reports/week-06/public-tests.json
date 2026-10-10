@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "week": 6,
+  "mode": "public",
+  "commitSha": "ed48ba1e9b916f236004628aad738b04982acda8",
+  "evaluatedAt": "2026-10-10T08:39:19.230324+00:00",
+  "status": "fail",
+  "checks": [
+    {
+      "id": "base_files",
+      "status": "pass",
+      "detail": "missing=[]"
+    },
+    {
+      "id": "react_native_profile",
+      "status": "pass",
+      "detail": "missing packages=[]"
+    },
+    {
+      "id": "toolchain_scripts",
+      "status": "pass",
+      "detail": "missing scripts=[]"
+    },
+    {
+      "id": "workflow_integrity",
+      "status": "pass",
+      "detail": "bypass markers=[]"
+    },
+    {
+      "id": "secret_scan",
+      "status": "pass",
+      "detail": "hits=[]"
+    },
+    {
+      "id": "required_evidence",
+      "status": "pass",
+      "detail": "missing/empty=[]"
+    },
+    {
+      "id": "schema:reports/week-06/auth-tests.json",
+      "status": "fail",
+      "detail": "commitSha must be HEAD or its direct evidence-only parent"
+    },
+    {
+      "id": "schema:reports/week-06/concurrency.json",
+      "status": "fail",
+      "detail": "commitSha must be HEAD or its direct evidence-only parent"
+    },
+    {
+      "id": "schema:evidence/week-06/engineering.json",
+      "status": "fail",
+      "detail": "commitSha must be HEAD or its direct evidence-only parent"
+    },
+    {
+      "id": "schema:evidence/week-06/individual.json",
+      "status": "fail",
+      "detail": "3523110495: commitShas must contain full lowercase Git SHAs"
+    }
+  ]
+}

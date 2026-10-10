@@ -2,7 +2,7 @@ import { createServer } from 'node:http';
 import { Buffer } from 'node:buffer';
 import { handleCampusOps } from './campusops.mjs';
 
-const host = process.env.COURSE_BACKEND_HOST ?? '127.0.0.1';
+const host = process.env.COURSE_BACKEND_HOST ?? '0.0.0.0';
 const port = Number(process.env.COURSE_BACKEND_PORT ?? 4310);
 const completedOperations = new Map();
 
@@ -10,6 +10,8 @@ function send(response, status, body, headers = {}) {
   const value = typeof body === 'string' ? body : JSON.stringify(body);
   response.writeHead(status, {
     'access-control-allow-origin': '*',
+    'access-control-allow-headers': 'Accept, Authorization, Content-Type, Idempotency-Key, X-Course-Actor, X-Course-Scenario',
+    'access-control-allow-methods': 'GET, POST, OPTIONS',
     'content-type': typeof body === 'string' ? 'application/json' : 'application/json; charset=utf-8',
     ...headers,
   });
@@ -72,6 +74,14 @@ const server = createServer(async (request, response) => {
     return send(response, 201, result);
   }
   return send(response, 404, { code: 'not_found' });
+});
+
+server.on('error', (error) => {
+  if (error.code === 'EADDRINUSE') {
+    process.stdout.write(`DMI controlled backend ya está ejecutándose en http://${host}:${port}\n`);
+    return;
+  }
+  throw error;
 });
 
 server.listen(port, host, () => {

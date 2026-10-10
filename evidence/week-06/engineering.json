@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "week": 6,
+  "commitSha": "1f4f7043dc341b3b71e51acae76b1e1420e97c15",
+  "decision": "Usamos CampusSessionManager como fuente única de sesión: conserva una generación, un único refreshInFlight y un reloj inyectable. IncidentCloudClient delega en withFreshToken cuando recibe un gestor de sesión; una respuesta 401 inicia o comparte una sola renovación y sólo reintenta la solicitud original una vez. Si el refresh falla, expira o termina después de logout, se borra el almacenamiento y el estado vuelve a anonymous.",
+  "alternatives": [
+    "Renovar cada solicitud 401 de forma independiente. Es sencillo de escribir, pero simultáneamente puede emitir varios refresh con el mismo refresh token y generar resultados de carrera.",
+    "Reintentar una solicitud 401 indefinidamente hasta obtener éxito. Puede aparentar recuperación, pero oculta fallos de autenticación, agota red y deja un bucle de renovación.",
+    "Mantener un refreshInFlight compartido y una generación de sesión. Requiere coordinación explícita y pruebas de carrera, pero evita renovaciones duplicadas y descarta respuestas que pertenecen a una sesión cerrada."
+  ],
+  "tradeoff": "Aceptamos un gestor y errores tipados adicionales para obtener una sola renovación concurrente, un reintento acotado y un logout seguro. El almacenamiento por defecto es sólo de memoria para las pruebas; la interfaz SessionStorage permite inyectar el almacenamiento seguro de la plataforma sin exponer tokens a registros.",
+  "requirementIds": ["AC-01", "AC-02", "AC-03", "AC-04", "AC-05"],
+  "verification": [
+    {
+      "command": "npm test -- --ci --runInBand course-tests/public/week-06.test.ts course-tests/week-06.session.test.ts",
+      "result": "PASS: 2 suites y 6 pruebas aprobadas.",
+      "evidence": "Cubre eventos públicos de 401/logout, expiración con reloj controlable, single-flight, fallo de refresh, refresh obsoleto después de logout y límite de un reintento en el cliente."
+    },
+    {
+      "command": "npm run typecheck; npm run lint; npm run backend:self-test",
+      "result": "PASS: TypeScript, ESLint y el self-test del backend terminaron correctamente.",
+      "evidence": "La integración opcional del cliente conserva las pruebas anteriores y el backend confirma autorización de reportante, técnico asignado y coordinación."
+    }
+  ]
+}

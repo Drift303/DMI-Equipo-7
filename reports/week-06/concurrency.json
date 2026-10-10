@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "week": 6,
+  "commitSha": "1f4f7043dc341b3b71e51acae76b1e1420e97c15",
+  "generatedAt": "2026-10-09T20:31:01-06:00",
+  "checks": [
+    {
+      "id": "public-concurrent-401-single-flight",
+      "status": "pass",
+      "scenarioType": "boundary",
+      "command": "npm test -- --ci --runInBand course-tests/public/week-06.test.ts",
+      "evidence": "Tres eventos request401 de generación 0 se agrupan en una sola renovación; el resumen contiene refreshCalls=1 y reintenta a, b y c una sola vez."
+    },
+    {
+      "id": "runtime-expired-session-single-flight",
+      "status": "pass",
+      "scenarioType": "boundary",
+      "command": "npm test -- --ci --runInBand course-tests/week-06.session.test.ts",
+      "evidence": "Tres withFreshToken simultáneos al llegar a expiresAt comparten refreshInFlight; el contador del sustituto fetch es exactamente 1 para /v1/session/refresh."
+    },
+    {
+      "id": "limited-retry-after-401",
+      "status": "pass",
+      "scenarioType": "failure",
+      "command": "npm test -- --ci --runInBand course-tests/week-06.session.test.ts",
+      "evidence": "IncidentCloudClient reintenta una vez tras 401 y el segundo 401 conserva UnauthorizedResponseError. La prueba observa cuatro solicitudes totales (login, solicitud, refresh, reintento) y exactamente un refresh."
+    },
+    {
+      "id": "logout-during-refresh",
+      "status": "pass",
+      "scenarioType": "failure",
+      "command": "npm test -- --ci --runInBand course-tests/week-06.session.test.ts",
+      "evidence": "Logout incrementa la generación y limpia SessionStorage antes de que termine el refresh pendiente; no se rehidrata una sesión ya cerrada."
+    }
+  ]
+}

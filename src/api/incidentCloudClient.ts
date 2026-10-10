@@ -2,6 +2,7 @@ import { isValidIncident, type Incident, type IncidentRepository } from '../camp
 import type { IncidentCategory } from '../campusops/contracts';
 import type { JsonObject, ParseResult } from '../course-evaluation/contracts';
 import { parseRemoteResource } from '../course-evaluation';
+import { CampusSessionManager, UnauthorizedResponseError } from './sessionManager';
 
 export type IncidentCloudErrorKind = 'contract' | 'empty' | 'http' | 'network' | 'timeout';
 
@@ -23,6 +24,7 @@ type IncidentCloudClientOptions = Readonly<{
   actorId?: string;
   timeoutMs?: number;
   fetchImpl?: typeof fetch;
+  sessionManager?: CampusSessionManager;
 }>;
 
 type CreateIncidentInput = Readonly<{
@@ -78,13 +80,15 @@ export class IncidentCloudClient implements IncidentRepository {
   private readonly actorId: string;
   private readonly timeoutMs: number;
   private readonly fetchImpl: typeof fetch;
+  private readonly sessionManager: CampusSessionManager | undefined;
 
   constructor(options: IncidentCloudClientOptions = {}) {
     this.baseUrl = (options.baseUrl ?? process.env.EXPO_PUBLIC_COURSE_BACKEND_URL ?? DEFAULT_URL).replace(/\/$/, '');
     this.accessToken = options.accessToken ?? 'course-valid-token';
     this.actorId = options.actorId ?? 'reporter-1';
     this.timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
-    this.fetchImpl = options.fetchImpl ?? fetch;
+    this.fetchImpl = options.fetchImpl ?? fetch.bind(globalThis);
+    this.sessionManager = options.sessionManager;
   }
 
   async list(): Promise<readonly Incident[]> {
@@ -126,36 +130,47 @@ export class IncidentCloudClient implements IncidentRepository {
   }
 
   private async request(path: string, init: RequestInit = {}): Promise<unknown> {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), this.timeoutMs);
-    try {
-      const response = await this.fetchImpl(`${this.baseUrl}${path}`, {
-        ...init,
-        signal: controller.signal,
-        headers: {
-          Authorization: `Bearer ${this.accessToken}`,
-          'X-Course-Actor': this.actorId,
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          ...init.headers,
-        },
-      });
-      if (!response.ok) {
-        throw new IncidentCloudError('http', `Cloud request failed with ${response.status}`, response.status);
-      }
+    const requestWithToken = async (accessToken: string): Promise<unknown> => {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), this.timeoutMs);
       try {
-        return await response.json();
-      } catch {
-        throw new IncidentCloudError('contract', 'Cloud response is not valid JSON');
+        const response = await this.fetchImpl(`${this.baseUrl}${path}`, {
+          ...init,
+          signal: controller.signal,
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'X-Course-Actor': this.sessionManager?.current?.actorId ?? this.actorId,
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            ...init.headers,
+          },
+        });
+        if (response.status === 401) {
+          throw new UnauthorizedResponseError();
+        }
+        if (!response.ok) {
+          throw new IncidentCloudError('http', `Cloud request failed with ${response.status}`, response.status);
+        }
+        try {
+          return await response.json();
+        } catch {
+          throw new IncidentCloudError('contract', 'Cloud response is not valid JSON');
+        }
+      } catch (error) {
+        if (error instanceof IncidentCloudError || error instanceof UnauthorizedResponseError) throw error;
+        if (error instanceof DOMException && error.name === 'AbortError') {
+          throw new IncidentCloudError('timeout', 'Cloud request timed out');
+        }
+        throw new IncidentCloudError('network', 'Cloud request failed');
+      } finally {
+        clearTimeout(timeout);
       }
-    } catch (error) {
-      if (error instanceof IncidentCloudError) throw error;
-      if (error instanceof DOMException && error.name === 'AbortError') {
-        throw new IncidentCloudError('timeout', 'Cloud request timed out');
-      }
-      throw new IncidentCloudError('network', 'Cloud request failed');
-    } finally {
-      clearTimeout(timeout);
+    };
+
+    if (this.sessionManager) {
+      return this.sessionManager.withFreshToken(requestWithToken);
     }
+
+    return requestWithToken(this.accessToken);
   }
 }

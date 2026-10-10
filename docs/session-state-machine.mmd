@@ -1,0 +1,13 @@
+stateDiagram-v2
+  [*] --> anonymous
+  anonymous --> authenticating: login(actorId)
+  authenticating --> authenticated: login succeeds / persist session
+  authenticating --> anonymous: login fails
+
+  authenticated --> refreshing: expiresAt <= clock OR request returns 401
+  refreshing --> authenticated: one shared refresh succeeds / replace tokens and expiresAt
+  refreshing --> anonymous: refresh fails or response is obsolete / clear storage
+
+  authenticated --> anonymous: logout / clear storage
+  refreshing --> anonymous: logout / invalidate generation and clear storage
+  anonymous --> [*]

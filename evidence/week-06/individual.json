@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "week": 6,
+  "teamId": "9B-E07",
+  "members": [
+    {
+      "studentId": "3523110159",
+      "commitShas": ["41ec857fe35bfd162df0fc6d7823632d10d6081f"],
+      "files": [
+        "src/api/sessionManager.ts",
+        "src/api/incidentCloudClient.ts",
+        "src/course-evaluation/index.ts",
+        "course-tests/week-06.session.test.ts",
+        "docs/session-state-machine.mmd"
+      ],
+      "tests": [
+        "npm test -- --ci --runInBand course-tests/public/week-06.test.ts course-tests/week-06.session.test.ts",
+        "npm run typecheck",
+        "npm run lint"
+      ],
+      "reviews": [],
+      "prediction": "Esperaba que solicitudes que expiran a la vez compartieran una renovación y que logout invalidara una respuesta de refresh tardía.",
+      "command": "npm test -- --ci --runInBand course-tests/public/week-06.test.ts course-tests/week-06.session.test.ts",
+      "observedResult": "PASS: 2 suites y 6 pruebas aprobadas.",
+      "explanation": "Implementé el gestor de estados de sesión, la renovación single-flight, la invalidación por generación, la integración opcional del cliente cloud y las pruebas deterministas."
+    },
+    {
+      "studentId": "3523110495",
+      "commitShas": ["PENDIENTE_DE_CONFIRMACION_POR_EL_INTEGRANTE"],
+      "files": ["PENDIENTE_DE_CONFIRMACION_POR_EL_INTEGRANTE"],
+      "tests": [],
+      "reviews": ["Pendiente: la integrante debe registrar su revisión técnica, SHA propio y resultado observado antes de entregar."],
+      "prediction": "Pendiente de completar por la integrante.",
+      "command": "Pendiente de completar por la integrante.",
+      "observedResult": "Pendiente de completar por la integrante.",
+      "explanation": "Registro reservado para evidencia individual; no debe enviarse como entrega final hasta que la integrante lo complete."
+    },
+    {
+      "studentId": "3523110231",
+      "commitShas": ["PENDIENTE_DE_CONFIRMACION_POR_EL_INTEGRANTE"],
+      "files": ["PENDIENTE_DE_CONFIRMACION_POR_EL_INTEGRANTE"],
+      "tests": [],
+      "reviews": ["Pendiente: el integrante debe registrar su revisión técnica, SHA propio y resultado observado antes de entregar."],
+      "prediction": "Pendiente de completar por el integrante.",
+      "command": "Pendiente de completar por el integrante.",
+      "observedResult": "Pendiente de completar por el integrante.",
+      "explanation": "Registro reservado para evidencia individual; no debe enviarse como entrega final hasta que el integrante lo complete."
+    }
+  ]
+}

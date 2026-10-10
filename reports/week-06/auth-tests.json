@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "week": 6,
+  "commitSha": "1f4f7043dc341b3b71e51acae76b1e1420e97c15",
+  "generatedAt": "2026-10-09T20:31:01-06:00",
+  "checks": [
+    {
+      "id": "login-and-controlled-expiration",
+      "status": "pass",
+      "scenarioType": "boundary",
+      "command": "npm test -- --ci --runInBand course-tests/week-06.session.test.ts",
+      "evidence": "La prueba inicia sesión con el actor synthetic technician-1, adelanta un reloj inyectado a expiresAt y verifica que las tres solicitudes reciben access-1 después de renovar."
+    },
+    {
+      "id": "failed-refresh-clears-session",
+      "status": "pass",
+      "scenarioType": "failure",
+      "command": "npm test -- --ci --runInBand course-tests/week-06.session.test.ts",
+      "evidence": "Una respuesta 401 al refresh produce SessionError de tipo refresh, deja current en null, borra MemorySessionStorage y devuelve el estado anonymous."
+    },
+    {
+      "id": "logout-invalidates-obsolete-refresh",
+      "status": "pass",
+      "scenarioType": "failure",
+      "command": "npm test -- --ci --runInBand course-tests/week-06.session.test.ts",
+      "evidence": "La prueba bloquea la respuesta de refresh, ejecuta logout y libera esa respuesta. La generación cambia, por lo que el refresh obsoleto no restaura ni el token ni el almacenamiento."
+    },
+    {
+      "id": "server-role-authorization",
+      "status": "pass",
+      "scenarioType": "nominal",
+      "command": "npm run backend:self-test",
+      "evidence": "El self-test controlado verificó login de técnico, prohibición de cierre para reportante, resolución por técnico asignado y cierre o reapertura por coordinación."
+    }
+  ]
+}
