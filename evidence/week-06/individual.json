@@ -24,17 +24,27 @@
       "observedResult": "PASS: 2 suites y 6 pruebas aprobadas.",
       "explanation": "Implementé el gestor de estados de sesión, la renovación single-flight, la invalidación por generación, la integración opcional del cliente cloud y las pruebas deterministas."
     },
+    
     {
       "studentId": "3523110495",
-      "commitShas": ["PENDIENTE_DE_CONFIRMACION_POR_EL_INTEGRANTE"],
-      "files": ["PENDIENTE_DE_CONFIRMACION_POR_EL_INTEGRANTE"],
-      "tests": [],
-      "reviews": ["Pendiente: la integrante debe registrar su revisión técnica, SHA propio y resultado observado antes de entregar."],
-      "prediction": "Pendiente de completar por la integrante.",
-      "command": "Pendiente de completar por la integrante.",
-      "observedResult": "Pendiente de completar por la integrante.",
-      "explanation": "Registro reservado para evidencia individual; no debe enviarse como entrega final hasta que la integrante lo complete."
+      "commitShas": ["8523fb26e049465e2b36e2b24c58f1201acc18ed"],
+      "files": [
+       "course-tests/week-06.session.test.ts"
+      ],
+      "tests": [
+        "La sesión maneja correctamente un error HTTP 401",
+        "Caso A: refresh valido",
+        "Caso B: refresh falla"
+      ],
+      "reviews": [
+        "Se revisó la prueba de sesión y se comprobó el manejo del error HTTP 401. Las tres pruebas pasaron correctamente."
+      ],
+      "prediction": "Se espera que el cliente maneje correctamente las respuestas HTTP 401 y genere el error correspondiente.",
+      "command": "npm test -- --ci --runInBand course-tests/week-06.session.test.ts; npm run typecheck; npm run lint",
+      "observedResult": "La suite de pruebas pasó con 3 pruebas aprobadas y 0 fallidas. npm run typecheck y npm run lint se ejecutaron sin mostrar errores.",
+      "explanation": "Se agregó una prueba para comprobar que IncidentCloudClient rechaza la petición cuando el servidor responde con HTTP 401, generando un IncidentCloudError con kind http y status 401."
     },
+
     {
       "studentId": "3523110231",
       "commitShas": ["PENDIENTE_DE_CONFIRMACION_POR_EL_INTEGRANTE"],
