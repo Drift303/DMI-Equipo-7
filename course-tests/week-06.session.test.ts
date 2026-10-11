@@ -127,3 +127,26 @@ test('el cliente comparte la renovación y no reintenta un segundo 401', async (
   expect(fetchImpl).toHaveBeenCalledTimes(4);
   expect(fetchImpl.mock.calls.filter(([url]) => url.toString().endsWith('/refresh'))).toHaveLength(1);
 });
+
+
+
+test('La sesión maneja correctamente un error HTTP 401', async () => {
+  const fetchImpl = (async () => {
+    return {
+      ok: false,
+      status: 401,
+      json: async () => ({}),
+    } as Response;
+  }) as typeof fetch;
+
+  const client = new IncidentCloudClient({
+    accessToken: 'expired-token',
+    fetchImpl,
+  });
+
+  await expect(client.list()).rejects.toMatchObject({
+    name: 'IncidentCloudError',
+    kind: 'http',
+    status: 401,
+  });
+});
