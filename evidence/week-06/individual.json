@@ -47,14 +47,21 @@
 
     {
       "studentId": "3523110231",
-      "commitShas": ["PENDIENTE_DE_CONFIRMACION_POR_EL_INTEGRANTE"],
-      "files": ["PENDIENTE_DE_CONFIRMACION_POR_EL_INTEGRANTE"],
-      "tests": [],
-      "reviews": ["Pendiente: el integrante debe registrar su revisión técnica, SHA propio y resultado observado antes de entregar."],
-      "prediction": "Pendiente de completar por el integrante.",
-      "command": "Pendiente de completar por el integrante.",
-      "observedResult": "Pendiente de completar por el integrante.",
-      "explanation": "Registro reservado para evidencia individual; no debe enviarse como entrega final hasta que el integrante lo complete."
+      "commitShas": ["PENDIENTE: reemplazar por el SHA completo de tu commit"],
+      "files": [
+        "docs/session-state-machine.mmd",
+        "evidence/week-06/individual.json"
+      ],
+      "tests": [
+        "npm test -- --ci --runInBand course-tests/public/week-06.test.ts course-tests/week-06.session.test.ts",
+        "npm run typecheck",
+        "npm run lint"
+      ],
+      "reviews": [],
+      "prediction": "Esperaba que el diagrama representara inicio de sesión, autenticación, expiración o 401, una renovación compartida, el fallo de renovación y el cierre seguro de sesión.",
+      "command": "npm test -- --ci --runInBand course-tests/public/week-06.test.ts course-tests/week-06.session.test.ts; npm run typecheck; npm run lint",
+      "observedResult": "La prueba pública course-tests/public/week-06.test.ts aprobó sus 2 pruebas. npm run typecheck y npm run lint terminaron sin errores. La suite course-tests/week-06.session.test.ts tuvo 6 pruebas aprobadas y 1 fallida: esperaba IncidentCloudError con kind http y status 401, pero el cliente devolvió UnauthorizedResponseError.",
+      "explanation": "Completé el diagrama Mermaid de la máquina de estados de sesión. El diagrama muestra login correcto o fallido, sesión autenticada, expiración o HTTP 401, una renovación single-flight, error u obsolescencia de la renovación y logout con limpieza de sesión. La verificación también identificó una incompatibilidad real entre la expectativa de la prueba de sesión y el tipo de error 401 que actualmente devuelve el cliente."
     }
   ]
 }

@@ -1,13 +1,17 @@
 stateDiagram-v2
-  [*] --> anonymous
-  anonymous --> authenticating: login(actorId)
-  authenticating --> authenticated: login succeeds / persist session
-  authenticating --> anonymous: login fails
+  [*] --> anonymous: aplicación inicia sin sesión
 
-  authenticated --> refreshing: expiresAt <= clock OR request returns 401
-  refreshing --> authenticated: one shared refresh succeeds / replace tokens and expiresAt
-  refreshing --> anonymous: refresh fails or response is obsolete / clear storage
+  anonymous --> authenticating: inicio de sesión / login(actorId)
+  authenticating --> authenticated: credenciales válidas / persistir sesión
+  authenticating --> anonymous: error de inicio de sesión / limpiar estado temporal
 
-  authenticated --> anonymous: logout / clear storage
-  refreshing --> anonymous: logout / invalidate generation and clear storage
+  authenticated --> refreshing: sesión expira (expiresAt <= clock)
+  authenticated --> refreshing: petición recibe HTTP 401
+  refreshing: renovación compartida (single-flight)
+  refreshing --> authenticated: refresh correcto / reemplazar tokens y expiresAt
+  refreshing --> anonymous: error al renovar / limpiar sesión y almacenamiento
+  refreshing --> anonymous: respuesta de refresh obsoleta / invalidar generación
+
+  authenticated --> anonymous: cierre de sesión / limpiar sesión y almacenamiento
+  refreshing --> anonymous: cierre de sesión durante refresh / invalidar generación y limpiar almacenamiento
   anonymous --> [*]
