@@ -171,6 +171,13 @@ export class IncidentCloudClient implements IncidentRepository {
       return this.sessionManager.withFreshToken(requestWithToken);
     }
 
-    return requestWithToken(this.accessToken);
+    try {
+      return await requestWithToken(this.accessToken);
+    } catch (error) {
+      if (error instanceof UnauthorizedResponseError) {
+        throw new IncidentCloudError('http', 'Cloud request failed with 401', 401);
+      }
+      throw error;
+    }
   }
 }

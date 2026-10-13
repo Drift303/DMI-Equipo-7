@@ -5,7 +5,7 @@
   "members": [
     {
       "studentId": "3523110159",
-      "commitShas": ["41ec857fe35bfd162df0fc6d7823632d10d6081f"],
+      "commitShas": ["1f67a667c98737e42fa67b2f6dc2b0c6d06c82a2"],
       "files": [
         "src/api/sessionManager.ts",
         "src/api/incidentCloudClient.ts",
@@ -21,7 +21,7 @@
       "reviews": [],
       "prediction": "Esperaba que solicitudes que expiran a la vez compartieran una renovación y que logout invalidara una respuesta de refresh tardía.",
       "command": "npm test -- --ci --runInBand course-tests/public/week-06.test.ts course-tests/week-06.session.test.ts",
-      "observedResult": "PASS: 2 suites y 6 pruebas aprobadas.",
+      "observedResult": "Verificación final local: 2 suites y 7 pruebas aprobadas; typecheck y lint terminaron sin errores.",
       "explanation": "Implementé el gestor de estados de sesión, la renovación single-flight, la invalidación por generación, la integración opcional del cliente cloud y las pruebas deterministas."
     },
     
@@ -41,13 +41,13 @@
       ],
       "prediction": "Se espera que el cliente maneje correctamente las respuestas HTTP 401 y genere el error correspondiente.",
       "command": "npm test -- --ci --runInBand course-tests/week-06.session.test.ts; npm run typecheck; npm run lint",
-      "observedResult": "La suite de pruebas pasó con 3 pruebas aprobadas y 0 fallidas. npm run typecheck y npm run lint se ejecutaron sin mostrar errores.",
+      "observedResult": "Verificación final local: course-tests/week-06.session.test.ts pasó con 5 pruebas aprobadas; typecheck y lint terminaron sin errores.",
       "explanation": "Se agregó una prueba para comprobar que IncidentCloudClient rechaza la petición cuando el servidor responde con HTTP 401, generando un IncidentCloudError con kind http y status 401."
     },
 
     {
       "studentId": "3523110231",
-      "commitShas": ["PENDIENTE: reemplazar por el SHA completo de tu commit"],
+      "commitShas": ["dde0d6daf1cb2f7a6c4e22901084938ed54416cf"],
       "files": [
         "docs/session-state-machine.mmd",
         "evidence/week-06/individual.json"
@@ -60,8 +60,8 @@
       "reviews": [],
       "prediction": "Esperaba que el diagrama representara inicio de sesión, autenticación, expiración o 401, una renovación compartida, el fallo de renovación y el cierre seguro de sesión.",
       "command": "npm test -- --ci --runInBand course-tests/public/week-06.test.ts course-tests/week-06.session.test.ts; npm run typecheck; npm run lint",
-      "observedResult": "La prueba pública course-tests/public/week-06.test.ts aprobó sus 2 pruebas. npm run typecheck y npm run lint terminaron sin errores. La suite course-tests/week-06.session.test.ts tuvo 6 pruebas aprobadas y 1 fallida: esperaba IncidentCloudError con kind http y status 401, pero el cliente devolvió UnauthorizedResponseError.",
-      "explanation": "Completé el diagrama Mermaid de la máquina de estados de sesión. El diagrama muestra login correcto o fallido, sesión autenticada, expiración o HTTP 401, una renovación single-flight, error u obsolescencia de la renovación y logout con limpieza de sesión. La verificación también identificó una incompatibilidad real entre la expectativa de la prueba de sesión y el tipo de error 401 que actualmente devuelve el cliente."
+      "observedResult": "Verificación final local: las 2 suites y 7 pruebas aprobaron; npm run typecheck y npm run lint terminaron sin errores.",
+      "explanation": "Completé el diagrama Mermaid de la máquina de estados de sesión. El diagrama muestra login correcto o fallido, sesión autenticada, expiración o HTTP 401, una renovación single-flight, error u obsolescencia de la renovación y logout con limpieza de sesión."
     }
   ]
 }
