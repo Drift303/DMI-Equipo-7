@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "week": 6,
-  "commitSha": "1f4f7043dc341b3b71e51acae76b1e1420e97c15",
+  "commitSha": "ef2736b0c9cf4a27b5ae6d8cb75c3d9b2db2095c",
   "decision": "Usamos CampusSessionManager como fuente única de sesión: conserva una generación, un único refreshInFlight y un reloj inyectable. IncidentCloudClient delega en withFreshToken cuando recibe un gestor de sesión; una respuesta 401 inicia o comparte una sola renovación y sólo reintenta la solicitud original una vez. Si el refresh falla, expira o termina después de logout, se borra el almacenamiento y el estado vuelve a anonymous.",
   "alternatives": [
     "Renovar cada solicitud 401 de forma independiente. Es sencillo de escribir, pero simultáneamente puede emitir varios refresh con el mismo refresh token y generar resultados de carrera.",
