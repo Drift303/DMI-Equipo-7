@@ -25,10 +25,10 @@
         "npm run backend:self-test"
       ],
       "reviews": [],
-      "prediction": "Esperaba que la cola persistente conservara el operationId y el contenido tras reabrirse, que una migración fallida dejara el esquema 1 intacto, que una reasignación remota contra un inicio local se declarara como conflicto sin perder ninguno de los dos hechos y que reenviar una operación con el mismo id no duplicara su efecto.",
+      "prediction": "Esperaba que la cola guardara el operationId y los datos al cerrarse y abrirse de nuevo, que si una migración fallaba se mantuviera el esquema 1, que si había un conflicto entre los cambios locales y los del servidor no se perdiera ninguno y que al reenviar una operación con el mismo id no se hiciera dos veces.",
       "command": "npm test -- --ci --runInBand course-tests/week-08.sync.test.ts course-tests/public/week-08.test.ts",
       "observedResult": "PASS: 2 suites y 19 pruebas aprobadas. typecheck, lint y backend:self-test terminaron correctamente.",
-      "explanation": "Implementé resolveSync y deduplicateOperations conectados a la lógica real, la cola persistente con migración v1 a v2 en un commit atómico, el motor de sincronización con conflicto y reintento idempotente, el adaptador HTTP contra el backend didáctico, las pruebas de la semana y los documentos data-model.md y sync-policy.md."
+      "explanation": "Conecté resolveSync y deduplicateOperations con la lógica del proyecto. También hice la cola para guardar las operaciones, la actualización de la versión 1 a la 2, la sincronización para manejar conflictos y reintentos, la conexión HTTP con el backend de pruebas, las pruebas de la semana y los documentos data-model.md y sync-policy.md."
     },
     {
       "studentId": "3523110495",
