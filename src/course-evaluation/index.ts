@@ -8,6 +8,8 @@ import type {
 } from './contracts';
 import type { IncidentLocation } from '../campusops/contracts';
 import { reduceRefreshEvents } from '../api/sessionManager';
+import { deduplicateOperations as dedupe, resolveSync as resolveRecords } from '../campusops/sync/merge';
+import type { SyncResolution } from '../campusops/sync/merge';
 
 function pending(name: string): never {
   throw new Error(`${name} must be implemented in the assigned week`);
@@ -97,18 +99,14 @@ export function coordinateRefresh(events: readonly AuthEvent[]): Readonly<{
   return reduceRefreshEvents(events);
 }
 
-export function resolveSync(
-  _base: SyncRecord,
-  _local: SyncRecord,
-  _remote: SyncRecord,
-): Readonly<{ kind: 'merged'; fields: JsonObject } | { kind: 'conflict'; fields: readonly string[] }> {
-  return pending('resolveSync');
+export function resolveSync(base: SyncRecord, local: SyncRecord, remote: SyncRecord): SyncResolution {
+  return resolveRecords(base, local, remote);
 }
 
 export function deduplicateOperations<T extends Readonly<{ operationId: string }>>(
-  _operations: readonly T[],
+  operations: readonly T[],
 ): readonly T[] {
-  return pending('deduplicateOperations');
+  return dedupe(operations);
 }
 
 export function planRetry(_input: Readonly<{
