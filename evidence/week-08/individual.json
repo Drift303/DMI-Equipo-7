@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "week": 8,
+  "teamId": "10B-E07",
+  "members": [
+    {
+      "studentId": "3523110159",
+      "commitShas": ["f39f8d91e98ae1562521247e3579337b0abb62a4"],
+      "files": [
+        "src/campusops/sync/merge.ts",
+        "src/campusops/sync/operationQueue.ts",
+        "src/campusops/sync/syncEngine.ts",
+        "src/campusops/sync/store.ts",
+        "src/campusops/sync/fileStore.ts",
+        "src/api/syncRemote.ts",
+        "src/course-evaluation/index.ts",
+        "course-tests/week-08.sync.test.ts",
+        "docs/data-model.md",
+        "docs/sync-policy.md"
+      ],
+      "tests": [
+        "npm test -- --ci --runInBand course-tests/week-08.sync.test.ts course-tests/public/week-08.test.ts",
+        "npm run typecheck",
+        "npm run lint",
+        "npm run backend:self-test"
+      ],
+      "reviews": [],
+      "prediction": "Esperaba que la cola persistente conservara el operationId y el contenido tras reabrirse, que una migración fallida dejara el esquema 1 intacto, que una reasignación remota contra un inicio local se declarara como conflicto sin perder ninguno de los dos hechos y que reenviar una operación con el mismo id no duplicara su efecto.",
+      "command": "npm test -- --ci --runInBand course-tests/week-08.sync.test.ts course-tests/public/week-08.test.ts",
+      "observedResult": "PASS: 2 suites y 19 pruebas aprobadas. typecheck, lint y backend:self-test terminaron correctamente.",
+      "explanation": "Implementé resolveSync y deduplicateOperations conectados a la lógica real, la cola persistente con migración v1 a v2 en un commit atómico, el motor de sincronización con conflicto y reintento idempotente, el adaptador HTTP contra el backend didáctico, las pruebas de la semana y los documentos data-model.md y sync-policy.md."
+    },
+    {
+      "studentId": "3523110495",
+      "commitShas": ["PENDIENTE: SHA completo (40 caracteres) de tu commit en tu rama semana-08-<nombre>"],
+      "files": ["PENDIENTE: archivo técnico que modificaste o creaste"],
+      "tests": ["PENDIENTE: comando de prueba que ejecutaste, por ejemplo npm test -- --ci --runInBand course-tests/week-08.sync.test.ts"],
+      "reviews": [],
+      "prediction": "PENDIENTE: qué esperabas que pasara antes de ejecutar tu prueba.",
+      "command": "PENDIENTE: comando exacto que ejecutaste.",
+      "observedResult": "PENDIENTE: resultado real que viste al ejecutarlo.",
+      "explanation": "PENDIENTE: qué cambiaste, por qué y cómo se relaciona con la persistencia o la sincronización."
+    },
+    {
+      "studentId": "3523110231",
+      "commitShas": ["PENDIENTE: SHA completo (40 caracteres) de tu commit en tu rama semana-08-<nombre>"],
+      "files": ["PENDIENTE: archivo técnico que modificaste o creaste"],
+      "tests": ["PENDIENTE: comando de prueba que ejecutaste, por ejemplo npm test -- --ci --runInBand course-tests/week-08.sync.test.ts"],
+      "reviews": [],
+      "prediction": "PENDIENTE: qué esperabas que pasara antes de ejecutar tu prueba.",
+      "command": "PENDIENTE: comando exacto que ejecutaste.",
+      "observedResult": "PENDIENTE: resultado real que viste al ejecutarlo.",
+      "explanation": "PENDIENTE: qué cambiaste, por qué y cómo se relaciona con la persistencia o la sincronización."
+    }
+  ]
+}
