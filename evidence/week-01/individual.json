@@ -8,7 +8,7 @@
       "studentId": "3523110231",
       "commitShas": ["54bd4b0930a44bde8353c721ac569a13836bcebb"],
       "files": ["docs/problem-definition.md"],
-      "tests": [],
+      "tests": ["npm test -- --ci --runInBand course-tests/public/week-01.test.ts"],
       "reviews": [],
       "prediction": "Esperaba que la definición del problema quedara completa, sin indicaciones pendientes, y que los criterios de aceptación fueran observables y verificables.",
       "command": "git log -1 --oneline",
