@@ -2,7 +2,7 @@ import { createServer } from 'node:http';
 import { Buffer } from 'node:buffer';
 import { handleCampusOps } from './campusops.mjs';
 
-const host = process.env.COURSE_BACKEND_HOST ?? '0.0.0.0';
+const host = process.env.COURSE_BACKEND_HOST ?? '127.0.0.1';
 const port = Number(process.env.COURSE_BACKEND_PORT ?? 4310);
 const completedOperations = new Map();
 
