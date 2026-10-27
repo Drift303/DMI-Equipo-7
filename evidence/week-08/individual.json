@@ -41,16 +41,23 @@
       "observedResult": "PENDIENTE: resultado real que viste al ejecutarlo.",
       "explanation": "PENDIENTE: qué cambiaste, por qué y cómo se relaciona con la persistencia o la sincronización."
     },
-    {
-      "studentId": "3523110231",
-      "commitShas": ["PENDIENTE: SHA completo (40 caracteres) de tu commit en tu rama semana-08-<nombre>"],
-      "files": ["PENDIENTE: archivo técnico que modificaste o creaste"],
-      "tests": ["PENDIENTE: comando de prueba que ejecutaste, por ejemplo npm test -- --ci --runInBand course-tests/week-08.sync.test.ts"],
-      "reviews": [],
-      "prediction": "PENDIENTE: qué esperabas que pasara antes de ejecutar tu prueba.",
-      "command": "PENDIENTE: comando exacto que ejecutaste.",
-      "observedResult": "PENDIENTE: resultado real que viste al ejecutarlo.",
-      "explanation": "PENDIENTE: qué cambiaste, por qué y cómo se relaciona con la persistencia o la sincronización."
-    }
+{
+  "studentId": "3523110231",
+  "commitShas": [],
+  "files": [
+    "course-tests/week-08.conflict.angel.test.ts",
+    "evidence/week-08/individual.json"
+  ],
+  "tests": [
+    "npm test -- --ci --runInBand course-tests/week-08.conflict.angel.test.ts",
+    "npm run typecheck",
+    "npm run lint"
+  ],
+  "reviews": [],
+  "prediction": "Esperaba que la deduplicación conservara la primera operación con la misma identidad, que cambios distintos sobre priority se declararan como conflicto y que una cola vacía terminara sin llamar al remoto.",
+  "command": "npm test -- --ci --runInBand course-tests/week-08.conflict.angel.test.ts; npm run typecheck; npm run lint",
+  "observedResult": "PASS: la suite individual de conflictos aprobó sus 3 pruebas. npm run typecheck y npm run lint terminaron sin errores.",
+  "explanation": "Agregué pruebas independientes de conflictos y sincronización: comprueban idempotencia local por operationId sin mutar la entrada, conflicto de cambios concurrentes sobre priority y sincronización segura cuando no hay operaciones pendientes."
+}
   ]
 }
