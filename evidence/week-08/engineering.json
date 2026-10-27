@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
     "week":  8,
-    "commitSha":  "dd9f10440b9ca333d25ad41a9e3a87c1649da9c8",
+    "commitSha":  "9e6aeff6abd40fc821a4ff3a9e2cf4c2cb2a1934",
     "decision":  "Elegimos una política de conflicto por campo con merge de tres vías (base, local, remoto): los cambios en campos distintos se combinan; un mismo campo con contenido JSON distinto es conflicto y se conservan ambos hechos. La cola de operaciones es persistente, con operationId estable usado como Idempotency-Key, y sólo se retira una operación cuando el servidor confirma (applied o duplicate). La migración v1-\u003ev2 calcula el estado nuevo en memoria y lo escribe en un único commit atómico.",
     "alternatives":  [
                          "Last-write-wins: aplicar siempre el último cambio recibido. Es simple, pero una reasignación remota podría sobrescribir el inicio local o al revés, perdiendo un hecho en silencio.",
@@ -18,14 +18,14 @@
                        ],
     "verification":  [
                          {
-                             "command":  "npm test -- --ci --runInBand course-tests/week-08.sync.test.ts course-tests/public/week-08.test.ts",
-                             "result":  "PASS: 2 suites, 19 pruebas aprobadas.",
-                             "evidence":  "Cubren reinicio de cola en disco, migración válida y con falla (rollback), conflicto de reasignación (simulado y contra el backend real), merge de cambios independientes, deduplicación e idempotencia con respuesta perdida."
+                             "command":  "npm test -- --ci --runInBand course-tests/week-08.migration.vanessa.test.ts course-tests/week-08.conflict.angel.test.ts course-tests/week-08.sync.test.ts course-tests/public/week-08.test.ts",
+                             "result":  "PASS: 4 suites, 24 pruebas aprobadas.",
+                             "evidence":  "Las suites individuales de migración y conflictos, la suite integral de sincronización y las pruebas públicas de Semana 8 aprobaron; cubren reinicio, recuperación ante falla, conflictos, combinación y deduplicación."
                          },
                          {
-                             "command":  "npm run typecheck; npm run lint; npm run backend:self-test",
-                             "result":  "PASS: typecheck, lint y backend:self-test terminaron correctamente.",
-                             "evidence":  "El código compila con exactOptionalPropertyTypes, respeta las reglas de lint y el backend controlado conserva sus contratos de idempotencia y conflicto."
+                             "command":  "npm run typecheck; npm run lint; npm run backend:self-test; npm run test:smoke; npm run audit:ci",
+                             "result":  "PASS: los cinco comandos terminaron con código 0.",
+                             "evidence":  "Typecheck, lint, backend controlado y smoke pasaron. audit:ci terminó según su umbral crítico; npm audit reportó 6 hallazgos de severidad alta."
                          }
                      ]
 }

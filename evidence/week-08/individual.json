@@ -41,23 +41,23 @@
       "observedResult":"PASS. Se aprobó 1 suite con 2 pruebas de 2. También finalizaron correctamente npm run typecheck y npm run lint, sin errores reportados.",
       "explanation": "Creé pruebas individuales para comprobar la migración de los datos antiguos al nuevo esquema. Verifiqué que se conservaran el identificador de la operación, el incidente relacionado, el comentario y la referencia de la fotografía. También comprobé que, si la migración falla, los datos originales permanezcan intactos y que sea posible reintentarla. Esto se relaciona con la persistencia porque evita perder operaciones pendientes durante una actualización del almacenamiento y ayuda a mantener la información disponible para la sincronización posterior."
     },
-{
-  "studentId": "3523110231",
-  "commitShas": [],
-  "files": [
-    "course-tests/week-08.conflict.angel.test.ts",
-    "evidence/week-08/individual.json"
-  ],
-  "tests": [
-    "npm test -- --ci --runInBand course-tests/week-08.conflict.angel.test.ts",
-    "npm run typecheck",
-    "npm run lint"
-  ],
-  "reviews": [],
-  "prediction": "Esperaba que la deduplicación conservara la primera operación con la misma identidad, que cambios distintos sobre priority se declararan como conflicto y que una cola vacía terminara sin llamar al remoto.",
-  "command": "npm test -- --ci --runInBand course-tests/week-08.conflict.angel.test.ts; npm run typecheck; npm run lint",
-  "observedResult": "PASS: la suite individual de conflictos aprobó sus 3 pruebas. npm run typecheck y npm run lint terminaron sin errores.",
-  "explanation": "Agregué pruebas independientes de conflictos y sincronización: comprueban idempotencia local por operationId sin mutar la entrada, conflicto de cambios concurrentes sobre priority y sincronización segura cuando no hay operaciones pendientes."
-}
+    {
+      "studentId": "3523110231",
+      "commitShas": ["7e7343d27c20ae1fe42c94ec3db428dc0f5e2515"],
+      "files": [
+        "course-tests/week-08.conflict.angel.test.ts",
+        "evidence/week-08/individual.json"
+      ],
+      "tests": [
+        "npm test -- --ci --runInBand course-tests/week-08.conflict.angel.test.ts",
+        "npm run typecheck",
+        "npm run lint"
+      ],
+      "reviews": [],
+      "prediction": "Esperaba que la deduplicación conservara la primera operación con la misma identidad, que cambios distintos sobre priority se declararan como conflicto y que una cola vacía terminara sin llamar al remoto.",
+      "command": "npm test -- --ci --runInBand course-tests/week-08.conflict.angel.test.ts; npm run typecheck; npm run lint",
+      "observedResult": "PASS: la suite individual de conflictos aprobó sus 3 pruebas. npm run typecheck y npm run lint terminaron sin errores.",
+      "explanation": "Agregué pruebas independientes de conflictos y sincronización: comprueban idempotencia local por operationId sin mutar la entrada, conflicto de cambios concurrentes sobre priority y sincronización segura cuando no hay operaciones pendientes."
+    }
   ]
 }

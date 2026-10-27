@@ -1,77 +1,77 @@
 {
     "schemaVersion":  1,
     "week":  8,
-    "commitSha":  "dd9f10440b9ca333d25ad41a9e3a87c1649da9c8",
-    "generatedAt":  "2026-10-24T23:04:56-06:00",
+    "commitSha":  "9e6aeff6abd40fc821a4ff3a9e2cf4c2cb2a1934",
+    "generatedAt":  "2026-10-26T23:23:28-06:00",
     "checks":  [
                    {
                        "id":  "restart-queue-recovery",
                        "status":  "pass",
                        "scenarioType":  "nominal",
-                       "command":  "npm test -- --ci --runInBand course-tests/week-08.sync.test.ts course-tests/public/week-08.test.ts",
+                       "command":  "npm test -- --ci --runInBand course-tests/week-08.migration.vanessa.test.ts course-tests/week-08.conflict.angel.test.ts course-tests/week-08.sync.test.ts course-tests/public/week-08.test.ts",
                        "evidence":  "La cola escrita en un archivo en disco se reabre con una instancia nueva: conserva operationId op-restart-1, incidencia, autor, baseVersion, payload y fotos pendientes; un segundo enqueue con el mismo id no duplica."
                    },
                    {
                        "id":  "migration-valid-v1-to-v2",
                        "status":  "pass",
                        "scenarioType":  "nominal",
-                       "command":  "npm test -- --ci --runInBand course-tests/week-08.sync.test.ts course-tests/public/week-08.test.ts",
+                       "command":  "npm test -- --ci --runInBand course-tests/week-08.migration.vanessa.test.ts course-tests/week-08.conflict.angel.test.ts course-tests/week-08.sync.test.ts course-tests/public/week-08.test.ts",
                        "evidence":  "Datos v1 migran a v2: schemaVersion 1-\u003e2, la incidencia y la operación op-legacy-1 se conservan (nota y photoRef pasan a payload), se elimina la clave pending y una segunda migración es no-op."
                    },
                    {
                        "id":  "migration-failure-rollback",
                        "status":  "pass",
                        "scenarioType":  "failure",
-                       "command":  "npm test -- --ci --runInBand course-tests/week-08.sync.test.ts course-tests/public/week-08.test.ts",
+                       "command":  "npm test -- --ci --runInBand course-tests/week-08.migration.vanessa.test.ts course-tests/week-08.conflict.angel.test.ts course-tests/week-08.sync.test.ts course-tests/public/week-08.test.ts",
                        "evidence":  "Con falla inyectada tras incidents, tras queue y en el commit atómico, el almacén queda idéntico al estado v1 previo (sin mezcla); al reintentar migra a v2 conservando la cola."
                    },
                    {
                        "id":  "migration-future-version",
                        "status":  "pass",
                        "scenarioType":  "boundary",
-                       "command":  "npm test -- --ci --runInBand course-tests/week-08.sync.test.ts course-tests/public/week-08.test.ts",
+                       "command":  "npm test -- --ci --runInBand course-tests/week-08.migration.vanessa.test.ts course-tests/week-08.conflict.angel.test.ts course-tests/week-08.sync.test.ts course-tests/public/week-08.test.ts",
                        "evidence":  "schemaVersion 9 se rechaza con \"unsupported schema version 9\" sin modificar datos."
                    },
                    {
                        "id":  "conflict-reassignment-simulated",
                        "status":  "pass",
                        "scenarioType":  "failure",
-                       "command":  "npm test -- --ci --runInBand course-tests/week-08.sync.test.ts course-tests/public/week-08.test.ts",
+                       "command":  "npm test -- --ci --runInBand course-tests/week-08.migration.vanessa.test.ts course-tests/week-08.conflict.angel.test.ts course-tests/week-08.sync.test.ts course-tests/public/week-08.test.ts",
                        "evidence":  "Inicio local (in_progress) vs reasignación remota a technician-2: resolveSync declara conflicto en work; la operación queda state=conflict en la cola y no se envía nada al servidor."
                    },
                    {
                        "id":  "conflict-reassignment-real-backend",
                        "status":  "pass",
                        "scenarioType":  "failure",
-                       "command":  "npm test -- --ci --runInBand course-tests/week-08.sync.test.ts course-tests/public/week-08.test.ts",
+                       "command":  "npm test -- --ci --runInBand course-tests/week-08.migration.vanessa.test.ts course-tests/week-08.conflict.angel.test.ts course-tests/week-08.sync.test.ts course-tests/public/week-08.test.ts",
                        "evidence":  "Backend didáctico real: coordinator-1 reasigna campus-inc-101 a technician-2 mientras technician-1 tenía un start pendiente; la sincronización informa assignment_lost, conserva la operación y la incidencia sigue asignada a technician-2."
                    },
                    {
                        "id":  "independent-changes-merge",
                        "status":  "pass",
                        "scenarioType":  "nominal",
-                       "command":  "npm test -- --ci --runInBand course-tests/week-08.sync.test.ts course-tests/public/week-08.test.ts",
+                       "command":  "npm test -- --ci --runInBand course-tests/week-08.migration.vanessa.test.ts course-tests/week-08.conflict.angel.test.ts course-tests/week-08.sync.test.ts course-tests/public/week-08.test.ts",
                        "evidence":  "Cambios en campos distintos se combinan sin mutar las entradas; con el mismo campo y contenido JSON distinto se reportan los campos en orden de nombre; mismo contenido no es conflicto."
                    },
                    {
                        "id":  "deduplicate-operations",
                        "status":  "pass",
                        "scenarioType":  "boundary",
-                       "command":  "npm test -- --ci --runInBand course-tests/week-08.sync.test.ts course-tests/public/week-08.test.ts",
+                       "command":  "npm test -- --ci --runInBand course-tests/week-08.migration.vanessa.test.ts course-tests/week-08.conflict.angel.test.ts course-tests/week-08.sync.test.ts course-tests/public/week-08.test.ts",
                        "evidence":  "deduplicateOperations conserva la primera operación por operationId (misma referencia) y la entrada serializada no cambia."
                    },
                    {
                        "id":  "idempotent-retry-lost-response",
                        "status":  "pass",
                        "scenarioType":  "failure",
-                       "command":  "npm test -- --ci --runInBand course-tests/week-08.sync.test.ts course-tests/public/week-08.test.ts",
+                       "command":  "npm test -- --ci --runInBand course-tests/week-08.migration.vanessa.test.ts course-tests/week-08.conflict.angel.test.ts course-tests/week-08.sync.test.ts course-tests/public/week-08.test.ts",
                        "evidence":  "Backend real: la respuesta del POST se pierde tras guardar; la operación sigue pendiente (attempts+1); el reintento con el mismo Idempotency-Key devuelve duplicate, se retira de la cola y la incidencia queda en version 2 (un solo efecto)."
                    },
                    {
                        "id":  "queue-retains-unconfirmed",
                        "status":  "pass",
                        "scenarioType":  "failure",
-                       "command":  "npm test -- --ci --runInBand course-tests/week-08.sync.test.ts course-tests/public/week-08.test.ts",
+                       "command":  "npm test -- --ci --runInBand course-tests/week-08.migration.vanessa.test.ts course-tests/week-08.conflict.angel.test.ts course-tests/week-08.sync.test.ts course-tests/public/week-08.test.ts",
                        "evidence":  "Sin conexión la operación permanece pending; una operación fuera de permisos queda rejected y no se descarta; operaciones de otros autores no se procesan."
                    },
                    {
