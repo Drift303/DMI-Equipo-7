@@ -109,14 +109,41 @@ export function deduplicateOperations<T extends Readonly<{ operationId: string }
   return dedupe(operations);
 }
 
-export function planRetry(_input: Readonly<{
+export function planRetry(input: Readonly<{
   method: 'GET' | 'POST';
   status: number | 'timeout';
   attempt: number;
   retryAfterMs?: number;
   idempotencyKey?: string;
 }>): Readonly<{ retry: boolean; delayMs: number; requiresStableIdempotencyKey: boolean }> {
-  return pending('planRetry');
+  const attempt = Number.isFinite(input.attempt) ? input.attempt : 0;
+  const retryAfterMs = typeof input.retryAfterMs === 'number' && Number.isFinite(input.retryAfterMs) && input.retryAfterMs >= 0
+    ? input.retryAfterMs
+    : 0;
+  const hasStableIdempotencyKey = typeof input.idempotencyKey === 'string' && input.idempotencyKey.trim().length > 0;
+
+  if (attempt >= 4) {
+    return { retry: false, delayMs: 0, requiresStableIdempotencyKey: false };
+  }
+
+  const isTransient = input.status === 'timeout'
+    || input.status === 408
+    || input.status === 429
+    || (typeof input.status === 'number' && input.status >= 500);
+
+  if (!isTransient) {
+    return { retry: false, delayMs: 0, requiresStableIdempotencyKey: false };
+  }
+
+  if (input.method === 'POST' && !hasStableIdempotencyKey) {
+    return { retry: false, delayMs: 0, requiresStableIdempotencyKey: true };
+  }
+
+  return {
+    retry: true,
+    delayMs: retryAfterMs,
+    requiresStableIdempotencyKey: false,
+  };
 }
 
 export function reduceRemoteResponses(_input: Readonly<{
@@ -132,7 +159,21 @@ export function reducePermissionLifecycle(
   return pending('reducePermissionLifecycle');
 }
 
-/** Week 09: see docs/CAMPUSOPS_API.md; this is not a completed solution. */
-export function selectIncidentLocation(_provider: unknown, _manualLabel: string): IncidentLocation {
-  return pending('selectIncidentLocation');
+export function selectIncidentLocation(provider: unknown, manualLabel: string): IncidentLocation {
+  if (provider && typeof provider === 'object' && !Array.isArray(provider)) {
+    const candidate = provider as Record<string, unknown>;
+    const label = typeof candidate.label === 'string' ? candidate.label.trim() : '';
+    const latitude = candidate.latitude;
+    const longitude = candidate.longitude;
+
+    const validLabel = label.length > 0;
+    const validLatitude = typeof latitude === 'number' && Number.isFinite(latitude) && latitude >= -90 && latitude <= 90;
+    const validLongitude = typeof longitude === 'number' && Number.isFinite(longitude) && longitude >= -180 && longitude <= 180;
+
+    if (validLabel && validLatitude && validLongitude) {
+      return { source: 'provider', label, latitude, longitude };
+    }
+  }
+
+  return { source: 'manual', label: manualLabel.trim() || 'Ubicación manual' };
 }

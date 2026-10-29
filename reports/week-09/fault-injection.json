@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "week": 9,
+  "commitSha": "64776969c4c4fe187adcea82de3735e849b60b27",
+  "generatedAt": "2026-10-29T08:29:05Z",
+  "checks": [
+    {
+      "id": "location-fallback-public-contract",
+      "status": "pass",
+      "scenarioType": "boundary",
+      "command": "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand course-tests/public/week-09.test.ts",
+      "evidence": "PASS en la prueba pública: una ubicación válida selecciona provider; null, respuesta incompleta y latitud fuera de rango seleccionan la etiqueta manual sin coordenadas. Esto prueba la función pura, no una falla HTTP real."
+    },
+    {
+      "id": "lost-response-after-commit",
+      "status": "not_applicable",
+      "scenarioType": "failure",
+      "command": "No ejecutado: falta reproducir timeout_after_commit contra el backend y verificar una repetición con la misma clave y payload.",
+      "evidence": "La respuesta perdida después de guardar y la ausencia de eventos duplicados aún no se han reproducido. No se afirma que este escenario haya pasado."
+    },
+    {
+      "id": "provider-http-failure-injection",
+      "status": "not_applicable",
+      "scenarioType": "failure",
+      "command": "No ejecutado: falta integrar el adaptador HTTP con los escenarios controlados de timeout, 429 y desconexión.",
+      "evidence": "La suite pública prueba valores de entrada del adaptador puro; no inyecta fallas de red ni valida caché o interfaz."
+    }
+  ]
+}

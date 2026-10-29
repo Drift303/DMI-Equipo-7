@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "week": 9,
+  "teamId": "10B-E07",
+  "members": [
+    {
+      "studentId": "3523110159",
+      "commitShas": ["64776969c4c4fe187adcea82de3735e849b60b27"],
+      "files": ["src/course-evaluation/index.ts"],
+      "tests": [
+        "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand course-tests/public/week-09.test.ts",
+        "npm run typecheck",
+        "npx eslint src/course-evaluation/index.ts"
+      ],
+      "reviews": [],
+      "prediction": "Esperaba que las entradas inválidas de ubicación usaran una etiqueta manual y que la función de reintentos bloqueara POST sin clave estable y detuviera intentos desde el cuarto.",
+      "command": "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand course-tests/public/week-09.test.ts; npm run typecheck; npx eslint src/course-evaluation/index.ts",
+      "observedResult": "PASS: suite pública 4/4; typecheck y lint terminaron con código 0.",
+      "explanation": "Implementé los adaptadores puros selectIncidentLocation y planRetry. Este registro solo incluye la contribución comprobable en el código y sus pruebas; la integración de proveedor/caché, el backoff progresivo y la inyección de respuesta perdida siguen pendientes."
+    },
+    {
+      "studentId": "3523110495",
+      "commitShas": ["pendiente"],
+      "files": ["pendiente"],
+      "tests": ["pendiente"],
+      "reviews": [],
+      "prediction": "pendiente",
+      "command": "pendiente",
+      "observedResult": "pendiente",
+      "explanation": "Pendiente: completar y registrar la contribución individual con archivos modificados, pruebas ejecutadas y resultados reales."
+    },
+    {
+      "studentId": "3523110231",
+      "commitShas": ["pendiente"],
+      "files": ["pendiente"],
+      "tests": ["pendiente"],
+      "reviews": [],
+      "prediction": "pendiente",
+      "command": "pendiente",
+      "observedResult": "pendiente",
+      "explanation": "Pendiente: completar y registrar la contribución individual con archivos modificados, pruebas ejecutadas y resultados reales."
+    }
+  ]
+}
