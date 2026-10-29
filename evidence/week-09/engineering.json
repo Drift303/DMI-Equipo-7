@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "week": 9,
+  "commitSha": "64776969c4c4fe187adcea82de3735e849b60b27",
+  "decision": "Como avance individual, implementé adaptadores puros para validar ubicaciones y planear reintentos acotados. El fallback conserva una etiqueta manual sin inventar coordenadas, y un POST solo puede reintentarse con identidad estable. Esta decisión no sustituye la integración del proveedor, el caché, la interfaz ni la reproducción real de respuesta perdida, que siguen pendientes.",
+  "alternatives": [
+    "Aceptar cualquier respuesta del proveedor o inventar coordenadas cuando falle, lo cual podría guardar ubicación incorrecta.",
+    "Reintentar cualquier escritura sin límite ni identidad estable, lo cual puede duplicar efectos o saturar el servicio.",
+    "Validar resultados, conservar fallback textual y exigir una clave estable para reintentar POST, manteniendo explícitos los casos aún no integrados."
+  ],
+  "tradeoff": "Beneficio: el adaptador puro rechaza datos inválidos y evita repetir un POST sin clave de idempotencia. Costo y limitación: aún no se conectó el flujo a un proveedor/caché ni se implementó backoff progresivo configurable; tampoco se ha comprobado el caso de respuesta perdida con el backend.",
+  "requirementIds": ["AC-02", "AC-03", "AC-04"],
+  "verification": [
+    {
+      "command": "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand course-tests/public/week-09.test.ts",
+      "result": "PASS: 1 suite, 4 pruebas aprobadas.",
+      "evidence": "Verifica los adaptadores puros: fallback de ubicación para entradas inválidas, Retry-After numérico, límite desde el intento 4 y clave estable para POST."
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "PASS: terminó con código 0.",
+      "evidence": "TypeScript no reportó errores en la implementación."
+    },
+    {
+      "command": "npx eslint src/course-evaluation/index.ts",
+      "result": "PASS: terminó con código 0.",
+      "evidence": "ESLint no reportó errores en el archivo modificado."
+    }
+  ]
+}
