@@ -1,34 +1,54 @@
-# Política de resiliencia — Semana 9 (avance)
+
+# Política de resiliencia — Semana 9
 
 ## Alcance implementado
 
-Este avance implementa dos adaptadores puros en `src/course-evaluation/index.ts`: `selectIncidentLocation` valida una respuesta de ubicación y conserva una etiqueta manual como fallback; `planRetry` decide si un error transitorio puede reintentarse, respeta un `Retry-After` numérico finito y bloquea un `POST` sin una clave de idempotencia no vacía.
+En esta semana se implementó la función `planRetry` en `src/course-evaluation/index.ts`, encargada de decidir cuándo se puede volver a intentar una petición después de un error temporal.
 
-Esto todavía no es la integración completa de la actividad. No se conectó un proveedor externo ni un caché, la interfaz no se modificó para capturar ubicación, y la respuesta perdida después de que el backend guarda no se reprodujo en esta verificación.
+La función respeta el tiempo indicado por `Retry-After`, limita los reintentos y evita repetir peticiones POST cuando no existe una clave de idempotencia.
 
-## Ubicación y fallback manual
+## Política de reintentos
 
-- Se acepta la respuesta del proveedor solo si es un objeto con una etiqueta textual no vacía y latitud/longitud numéricas finitas dentro de los rangos públicos.
-- Para una respuesta nula, incompleta o inválida, el adaptador devuelve la etiqueta manual y no inventa coordenadas.
-- La prueba pública cubre una respuesta válida, valores nulos/incompletos y coordenadas fuera de rango.
-- Pendiente: integrar proveedor y caché, conectar el adaptador HTTP para timeout/429/desconexión y habilitar la captura manual desde la interfaz.
+- Se consideran errores temporales los timeout, los códigos HTTP 408, 429 y los errores 5xx.
+- No se permiten reintentos cuando el número de intento es 4 o superior.
+- Las peticiones GET pueden reintentarse cuando ocurre un error temporal.
+- Las peticiones POST necesitan una clave de idempotencia estable y no vacía para permitir un nuevo intento.
+- Cuando existe un valor válido de `Retry-After`, se respeta exactamente el tiempo indicado.
+- Si `Retry-After` no está disponible o no es válido, la función utiliza una demora de 0 milisegundos.
 
-## Reintentos
+## Protección contra operaciones duplicadas
 
-- Los errores considerados transitorios por el adaptador son timeout, 408, 429 y estados 5xx.
-- No se reintenta desde el intento 4 inclusive.
-- Un `POST` no se reintenta sin una clave de idempotencia no vacía.
-- Si se proporciona un `Retry-After` numérico finito y no negativo, se devuelve ese valor como demora; en otros casos esta implementación devuelve 0.
-- Pendiente: backoff progresivo, límites configurables y medición de tiempos observados. La demora actual de 0 cuando no hay `Retry-After` no satisface por sí sola el requisito de esperas progresivas.
+Para evitar que una petición POST genere operaciones duplicadas, se requiere utilizar la misma clave de idempotencia en los reintentos.
 
-## Respuesta perdida tras guardar
+La clave debe mantenerse estable durante toda la operación. Si no existe una clave válida, el reintento se rechaza.
 
-La suite pública comprueba que la política permite reintentar un `POST` con una clave estable, pero no simula que el backend guarde una operación y luego pierda la respuesta. Por lo tanto, todavía no hay evidencia de que una repetición real conserve también el mismo contenido ni de que el backend evite duplicar eventos, evidencias o notificaciones.
+## Límite de reintentos
 
-Antes de repetir una escritura, el flujo integrado debe conservar exactamente la misma clave y payload. Si no puede garantizarlo, debe informar el resultado incierto en vez de enviar una operación nueva.
+La función establece un máximo de cuatro intentos. Cuando `attempt >= 4`, devuelve `retry: false` y una demora de cero milisegundos.
 
-## Verificación y pendientes
+Esto evita que una petición continúe reintentándose indefinidamente.
 
-Verificación realizada: `npm run typecheck`, `npx eslint src/course-evaluation/index.ts` y `npx jest --no-watchman --cacheDirectory .jest-cache --runInBand course-tests/public/week-09.test.ts`. La suite pública pasó 4 pruebas.
+## Fallback y manejo de errores
 
-La prueba pública no demuestra por sí sola proveedor/caché, fallos HTTP reales, integración de interfaz ni respuesta perdida tras guardar. Esos escenarios, la medición temporal y la evidencia real de cada integrante siguen pendientes.
+Cuando una petición no puede volver a intentarse, el flujo debe detener los intentos y comunicar que la operación no pudo completarse.
+
+Si se trata de un POST y se perdió la respuesta después de que el servidor guardó la información, no se debe generar una nueva operación con otra clave. Se debe conservar la misma clave y el mismo contenido para consultar o repetir la operación de forma segura.
+
+Si no se puede garantizar lo anterior, se debe informar que el resultado es incierto.
+
+## Métricas y verificación
+
+En `reports/week-09/retry-metrics.json` se registran los escenarios de reintento, los tiempos de espera y las decisiones tomadas.
+
+Las pruebas públicas verifican:
+
+- Que una respuesta 429 con `Retry-After` de 800 milisegundos respete ese tiempo.
+- Que no se permita reintentar desde el cuarto intento.
+- Que un POST sin clave de idempotencia no se repita.
+- Que un POST con una clave estable pueda reintentarse ante un error temporal.
+
+## Pendientes
+
+Todavía falta integrar los reintentos con las peticiones HTTP reales, comprobar la respuesta perdida después de guardar una operación y medir los tiempos de espera reales.
+
+También queda pendiente implementar backoff progresivo cuando no se proporciona `Retry-After`.
