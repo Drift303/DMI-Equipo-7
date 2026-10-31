@@ -109,6 +109,7 @@ export function deduplicateOperations<T extends Readonly<{ operationId: string }
   return dedupe(operations);
 }
 
+
 export function planRetry(input: Readonly<{
   method: 'GET' | 'POST';
   status: number | 'timeout';
@@ -116,27 +117,49 @@ export function planRetry(input: Readonly<{
   retryAfterMs?: number;
   idempotencyKey?: string;
 }>): Readonly<{ retry: boolean; delayMs: number; requiresStableIdempotencyKey: boolean }> {
-  const attempt = Number.isFinite(input.attempt) ? input.attempt : 0;
-  const retryAfterMs = typeof input.retryAfterMs === 'number' && Number.isFinite(input.retryAfterMs) && input.retryAfterMs >= 0
-    ? input.retryAfterMs
+  const attempt = Number.isFinite(input.attempt)
+    ? Math.max(0, Math.floor(input.attempt))
     : 0;
-  const hasStableIdempotencyKey = typeof input.idempotencyKey === 'string' && input.idempotencyKey.trim().length > 0;
+
+  const retryAfterMs =
+    typeof input.retryAfterMs === 'number'
+      && Number.isFinite(input.retryAfterMs)
+      && input.retryAfterMs >= 0
+      ? input.retryAfterMs
+      : 0;
+
+  const hasStableIdempotencyKey =
+    typeof input.idempotencyKey === 'string'
+    && input.idempotencyKey.trim().length > 0;
 
   if (attempt >= 4) {
-    return { retry: false, delayMs: 0, requiresStableIdempotencyKey: false };
+    return {
+      retry: false,
+      delayMs: 0,
+      requiresStableIdempotencyKey: false,
+    };
   }
 
-  const isTransient = input.status === 'timeout'
+  const isTransient =
+    input.status === 'timeout'
     || input.status === 408
     || input.status === 429
     || (typeof input.status === 'number' && input.status >= 500);
 
   if (!isTransient) {
-    return { retry: false, delayMs: 0, requiresStableIdempotencyKey: false };
+    return {
+      retry: false,
+      delayMs: 0,
+      requiresStableIdempotencyKey: false,
+    };
   }
 
   if (input.method === 'POST' && !hasStableIdempotencyKey) {
-    return { retry: false, delayMs: 0, requiresStableIdempotencyKey: true };
+    return {
+      retry: false,
+      delayMs: 0,
+      requiresStableIdempotencyKey: true,
+    };
   }
 
   return {

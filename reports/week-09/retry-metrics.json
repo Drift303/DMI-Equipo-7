@@ -1,7 +1,8 @@
+
 {
   "schemaVersion": 1,
   "week": 9,
-  "commitSha": "64776969c4c4fe187adcea82de3735e849b60b27",
+  "commitSha": "62cdc966174da06519ab2d7974c02085f033699e",
   "generatedAt": "2026-10-29T08:29:05Z",
   "checks": [
     {
@@ -24,6 +25,40 @@
       "scenarioType": "failure",
       "command": "No ejecutado: todavía no hay backoff progresivo ni medición de duración de reintentos integrada.",
       "evidence": "Los tests validan el valor delayMs de la función pura, no tiempos transcurridos ni repetición real de operaciones. La ausencia de duplicados tras una respuesta perdida no se ha verificado."
+    }
+  ],
+  "retryMetrics": [
+    {
+      "scenario": "GET con respuesta 429",
+      "attempt": 1,
+      "retryAfterMs": 800,
+      "retry": true,
+      "delayMs": 800,
+      "decision": "Se permite reintentar respetando Retry-After."
+    },
+    {
+      "scenario": "Se alcanza el límite de intentos",
+      "attempt": 4,
+      "retryAfterMs": 800,
+      "retry": false,
+      "delayMs": 0,
+      "decision": "Se detienen los reintentos para evitar ciclos infinitos."
+    },
+    {
+      "scenario": "POST sin clave de idempotencia",
+      "attempt": 1,
+      "retryAfterMs": 800,
+      "retry": false,
+      "delayMs": 0,
+      "decision": "Se rechaza el reintento para evitar operaciones duplicadas."
+    },
+    {
+      "scenario": "POST con clave de idempotencia",
+      "attempt": 1,
+      "retryAfterMs": 800,
+      "retry": true,
+      "delayMs": 800,
+      "decision": "Se permite reintentar porque existe una clave de idempotencia."
     }
   ]
 }

@@ -5,8 +5,12 @@
   "members": [
     {
       "studentId": "3523110159",
-      "commitShas": ["64776969c4c4fe187adcea82de3735e849b60b27"],
-      "files": ["src/course-evaluation/index.ts"],
+      "commitShas": [
+        "64776969c4c4fe187adcea82de3735e849b60b27"
+      ],
+      "files": [
+        "src/course-evaluation/index.ts"
+      ],
       "tests": [
         "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand course-tests/public/week-09.test.ts",
         "npm run typecheck",
@@ -20,20 +24,35 @@
     },
     {
       "studentId": "3523110495",
-      "commitShas": ["pendiente"],
-      "files": ["pendiente"],
-      "tests": ["pendiente"],
+      "commitShas": [
+        "62cdc966174da06519ab2d7974c02085f033699e"
+      ],
+      "files": [
+        "src/course-evaluation/index.ts",
+        "reports/week-09/retry-metrics.json",
+        "docs/resilience-policy.md"
+      ],
+      "tests": [
+        "npm run typecheck: PASS",
+        "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand course-tests/public/week-09.test.ts: PASS (4 pruebas aprobadas)"
+      ],
       "reviews": [],
-      "prediction": "pendiente",
-      "command": "pendiente",
-      "observedResult": "pendiente",
-      "explanation": "Pendiente: completar y registrar la contribución individual con archivos modificados, pruebas ejecutadas y resultados reales."
+      "prediction": "Las pruebas deberían comprobar que los reintentos respeten Retry-After, que exista un límite de cuatro intentos y que las peticiones POST necesiten una clave de idempotencia estable.",
+      "command": "npm run typecheck && npx jest --no-watchman --cacheDirectory .jest-cache --runInBand course-tests/public/week-09.test.ts",
+      "observedResult": "El typecheck terminó correctamente y las cuatro pruebas públicas de Semana 9 fueron aprobadas.",
+      "explanation": "Implementé y documenté la función planRetry para controlar los reintentos ante errores temporales. Se respeta el tiempo indicado por Retry-After, se limita el número de intentos y se evita repetir peticiones POST sin una clave de idempotencia estable. También registré los escenarios y las decisiones de reintento en retry-metrics.json y documenté la política de resiliencia y el fallback en resilience-policy.md."
     },
     {
       "studentId": "3523110231",
-      "commitShas": ["pendiente"],
-      "files": ["pendiente"],
-      "tests": ["pendiente"],
+      "commitShas": [
+        "pendiente"
+      ],
+      "files": [
+        "pendiente"
+      ],
+      "tests": [
+        "pendiente"
+      ],
       "reviews": [],
       "prediction": "pendiente",
       "command": "pendiente",
