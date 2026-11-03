@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "week": 9,
-  "commitSha": "62cdc966174da06519ab2d7974c02085f033699e",
+  "commitSha": "e706ea94602b4a4d6d05948171050f0180f39443",
   "decision": "Como avance individual, implementé adaptadores puros para validar ubicaciones y planear reintentos acotados. El fallback conserva una etiqueta manual sin inventar coordenadas, y un POST solo puede reintentarse con identidad estable. Esta decisión no sustituye la integración del proveedor, el caché, la interfaz ni la reproducción real de respuesta perdida, que siguen pendientes.",
   "alternatives": [
     "Aceptar cualquier respuesta del proveedor o inventar coordenadas cuando falle, lo cual podría guardar ubicación incorrecta.",
