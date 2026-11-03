@@ -1,54 +1,26 @@
 
 # Política de resiliencia — Semana 9
 
-## Alcance implementado
+## Proveedor de ubicación
 
-En esta semana se implementó la función `planRetry` en `src/course-evaluation/index.ts`, encargada de decidir cuándo se puede volver a intentar una petición después de un error temporal.
+`selectIncidentLocation` en `src/course-evaluation/index.ts` acepta una respuesta del proveedor solamente si es un objeto no nulo y no es un arreglo, su etiqueta contiene texto y sus coordenadas son números finitos dentro de latitud `[-90, 90]` y longitud `[-180, 180]`. La etiqueta se recorta antes de guardarse.
 
-La función respeta el tiempo indicado por `Retry-After`, limita los reintentos y evita repetir peticiones POST cuando no existe una clave de idempotencia.
+Cuando la respuesta está ausente, incompleta o tiene tipos/valores inválidos (incluido un objeto de error HTTP como 429), se usa la etiqueta manual recortada. Si también está vacía, se usa `Ubicación manual`. La ubicación manual no incluye coordenadas: no se inventan ni se reutilizan coordenadas dudosas. El llamador debe conservar la ubicación para que una persona pueda identificar el incidente.
+
+No hay caché de ubicaciones implementada en este flujo. Por lo tanto, no se presenta una ubicación almacenada como si fuera el resultado actual del proveedor.
 
 ## Política de reintentos
 
-- Se consideran errores temporales los timeout, los códigos HTTP 408, 429 y los errores 5xx.
-- No se permiten reintentos cuando el número de intento es 4 o superior.
-- Las peticiones GET pueden reintentarse cuando ocurre un error temporal.
-- Las peticiones POST necesitan una clave de idempotencia estable y no vacía para permitir un nuevo intento.
-- Cuando existe un valor válido de `Retry-After`, se respeta exactamente el tiempo indicado.
-- Si `Retry-After` no está disponible o no es válido, la función utiliza una demora de 0 milisegundos.
+`planRetry` decide si se puede volver a intentar una petición tras un error temporal.
 
-## Protección contra operaciones duplicadas
+- Se consideran transitorios timeout, HTTP 408, 429 y errores 5xx.
+- No se permite otro reintento cuando `attempt >= 4`.
+- GET puede reintentarse ante un error transitorio.
+- POST necesita una clave de idempotencia estable y no vacía; se debe conservar la misma clave y el mismo payload durante la operación.
+- Se respeta un `Retry-After` válido; si falta o no es válido, la demora es cero.
 
-Para evitar que una petición POST genere operaciones duplicadas, se requiere utilizar la misma clave de idempotencia en los reintentos.
+Ante una respuesta perdida después de guardar un POST, el resultado es incierto hasta consultar o repetir de forma segura con la misma identidad. No se debe generar una operación nueva con otra clave. La integración HTTP, la caché y la inyección de fallos de red no forman parte del adaptador puro actual.
 
-La clave debe mantenerse estable durante toda la operación. Si no existe una clave válida, el reintento se rechaza.
+## Evidencia y límites
 
-## Límite de reintentos
-
-La función establece un máximo de cuatro intentos. Cuando `attempt >= 4`, devuelve `retry: false` y una demora de cero milisegundos.
-
-Esto evita que una petición continúe reintentándose indefinidamente.
-
-## Fallback y manejo de errores
-
-Cuando una petición no puede volver a intentarse, el flujo debe detener los intentos y comunicar que la operación no pudo completarse.
-
-Si se trata de un POST y se perdió la respuesta después de que el servidor guardó la información, no se debe generar una nueva operación con otra clave. Se debe conservar la misma clave y el mismo contenido para consultar o repetir la operación de forma segura.
-
-Si no se puede garantizar lo anterior, se debe informar que el resultado es incierto.
-
-## Métricas y verificación
-
-En `reports/week-09/retry-metrics.json` se registran los escenarios de reintento, los tiempos de espera y las decisiones tomadas.
-
-Las pruebas públicas verifican:
-
-- Que una respuesta 429 con `Retry-After` de 800 milisegundos respete ese tiempo.
-- Que no se permita reintentar desde el cuarto intento.
-- Que un POST sin clave de idempotencia no se repita.
-- Que un POST con una clave estable pueda reintentarse ante un error temporal.
-
-## Pendientes
-
-Todavía falta integrar los reintentos con las peticiones HTTP reales, comprobar la respuesta perdida después de guardar una operación y medir los tiempos de espera reales.
-
-También queda pendiente implementar backoff progresivo cuando no se proporciona `Retry-After`.
+`reports/week-09/fault-injection.json` registra timeout, 429, respuesta incompleta y respuesta perdida. Las pruebas unitarias del adaptador verifican decisiones para valores de entrada, pero no simulan una falla HTTP real, una respuesta perdida posterior al guardado ni una repetición contra el backend. Esos escenarios se mantienen como no ejecutados y no se reportan como aprobados.
