@@ -109,30 +109,64 @@ export function deduplicateOperations<T extends Readonly<{ operationId: string }
   return dedupe(operations);
 }
 
+export type RetryPolicy = Readonly<{
+  maxAttempts: number;
+  baseDelayMs: number;
+  maxDelayMs: number;
+}>;
+
+export const DEFAULT_RETRY_POLICY: RetryPolicy = Object.freeze({
+  maxAttempts: 4,
+  baseDelayMs: 250,
+  maxDelayMs: 30_000,
+});
+
+function boundedPolicy(policy: Partial<RetryPolicy>): RetryPolicy {
+  const configuredMaxAttempts = policy.maxAttempts;
+  const configuredMaxDelay = policy.maxDelayMs;
+  const configuredBaseDelay = policy.baseDelayMs;
+  const maxAttempts = typeof configuredMaxAttempts === 'number' && Number.isFinite(configuredMaxAttempts)
+    ? Math.min(4, Math.max(1, Math.floor(configuredMaxAttempts)))
+    : DEFAULT_RETRY_POLICY.maxAttempts;
+  const maxDelayMs = typeof configuredMaxDelay === 'number'
+      && Number.isFinite(configuredMaxDelay)
+      && configuredMaxDelay >= 0
+    ? Math.min(30_000, Math.floor(configuredMaxDelay))
+    : DEFAULT_RETRY_POLICY.maxDelayMs;
+  const baseDelayMs = typeof configuredBaseDelay === 'number'
+      && Number.isFinite(configuredBaseDelay)
+      && configuredBaseDelay >= 0
+    ? Math.min(maxDelayMs, Math.floor(configuredBaseDelay))
+    : Math.min(DEFAULT_RETRY_POLICY.baseDelayMs, maxDelayMs);
+
+  return { maxAttempts, baseDelayMs, maxDelayMs };
+}
 
 export function planRetry(input: Readonly<{
   method: 'GET' | 'POST';
-  status: number | 'timeout';
+  status: number | 'timeout' | 'network';
   attempt: number;
   retryAfterMs?: number;
   idempotencyKey?: string;
-}>): Readonly<{ retry: boolean; delayMs: number; requiresStableIdempotencyKey: boolean }> {
-  const attempt = Number.isFinite(input.attempt)
-    ? Math.max(0, Math.floor(input.attempt))
-    : 0;
+}>, configuredPolicy: Partial<RetryPolicy> = {}): Readonly<{
+  retry: boolean;
+  delayMs: number;
+  requiresStableIdempotencyKey: boolean;
+}> {
+  const policy = boundedPolicy(configuredPolicy);
+  const attempt = Number.isFinite(input.attempt) ? Math.floor(input.attempt) : 0;
 
-  const retryAfterMs =
-    typeof input.retryAfterMs === 'number'
+  const retryAfterMs = typeof input.retryAfterMs === 'number'
       && Number.isFinite(input.retryAfterMs)
       && input.retryAfterMs >= 0
-      ? input.retryAfterMs
-      : 0;
+    ? input.retryAfterMs
+    : null;
 
   const hasStableIdempotencyKey =
     typeof input.idempotencyKey === 'string'
     && input.idempotencyKey.trim().length > 0;
 
-  if (attempt >= 4) {
+  if (attempt >= policy.maxAttempts || attempt >= 4 || attempt < 1) {
     return {
       retry: false,
       delayMs: 0,
@@ -142,9 +176,10 @@ export function planRetry(input: Readonly<{
 
   const isTransient =
     input.status === 'timeout'
+    || input.status === 'network'
     || input.status === 408
     || input.status === 429
-    || (typeof input.status === 'number' && input.status >= 500);
+    || (typeof input.status === 'number' && input.status >= 500 && input.status <= 599);
 
   if (!isTransient) {
     return {
@@ -162,9 +197,21 @@ export function planRetry(input: Readonly<{
     };
   }
 
+  const exponentialDelay = Math.min(
+    policy.maxDelayMs,
+    policy.baseDelayMs * (2 ** (attempt - 1)),
+  );
+  if (retryAfterMs !== null && retryAfterMs > policy.maxDelayMs) {
+    return {
+      retry: false,
+      delayMs: 0,
+      requiresStableIdempotencyKey: false,
+    };
+  }
+
   return {
     retry: true,
-    delayMs: retryAfterMs,
+    delayMs: retryAfterMs ?? exponentialDelay,
     requiresStableIdempotencyKey: false,
   };
 }

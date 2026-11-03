@@ -1,11 +1,14 @@
-import { useEffect, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 
 import type { Incident } from './src/campusops/domain/incidents';
+import type { IncidentLocation } from './src/campusops/contracts';
 import { checkBackendHealth } from './src/campusops/application/health';
-import { incidentUseCases, sessionManager } from './src/campusops/infrastructure/dependencies';
+import { selectIncidentLocation } from './src/course-evaluation';
+import { GeocodingError } from './src/api/locationClient';
+import { incidentUseCases, locationClient, sessionManager } from './src/campusops/infrastructure/dependencies';
 
 export default function App() {
   const [status, setStatus] = useState<'checking' | 'available' | 'offline'>('checking');
@@ -13,6 +16,13 @@ export default function App() {
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
   const [sessionStatus, setSessionStatus] = useState(sessionManager.status);
   const [sessionError, setSessionError] = useState<string | null>(null);
+  const [manualLocation, setManualLocation] = useState('Edificio de prueba A');
+  const [selectedLocation, setSelectedLocation] = useState<IncidentLocation>(
+    () => selectIncidentLocation(null, 'Edificio de prueba A'),
+  );
+  const [locationStatus, setLocationStatus] = useState<string | null>(null);
+  const [locationLoading, setLocationLoading] = useState(false);
+  const locationRequestSequence = useRef(0);
 
   useEffect(() => {
     let active = true;
@@ -58,6 +68,39 @@ export default function App() {
     await sessionManager.logout();
     setSessionError(null);
     refreshSessionStatus();
+  };
+
+  const findIncidentLocation = async () => {
+    if (!manualLocation.trim()) {
+      setSelectedLocation(selectIncidentLocation(null, ''));
+      setLocationStatus('Escribe un edificio, zona o referencia para continuar.');
+      return;
+    }
+
+    const requestId = ++locationRequestSequence.current;
+    const requestedLabel = manualLocation.trim();
+    setLocationLoading(true);
+    setLocationStatus(null);
+    try {
+      const providerResult = await locationClient.geocode(requestedLabel);
+      if (requestId !== locationRequestSequence.current) return;
+      const selected = selectIncidentLocation(providerResult, requestedLabel);
+      setSelectedLocation(selected);
+      setLocationStatus(selected.source === 'provider'
+        ? 'Se encontró una ubicación del proveedor; también puedes conservar el texto manual.'
+        : 'La respuesta no contiene una ubicación válida. Puedes continuar con el texto manual.');
+    } catch (error) {
+      if (requestId !== locationRequestSequence.current) return;
+      setSelectedLocation(selectIncidentLocation(null, requestedLabel));
+      const reason = error instanceof GeocodingError && error.kind === 'timeout'
+        ? 'La búsqueda agotó el tiempo de espera.'
+        : error instanceof GeocodingError && error.status === 429
+          ? 'El proveedor limitó la búsqueda (HTTP 429).'
+          : 'El servicio de ubicación no está disponible.';
+      setLocationStatus(`${reason} Puedes continuar con el edificio, zona o referencia manual.`);
+    } finally {
+      if (requestId === locationRequestSequence.current) setLocationLoading(false);
+    }
   };
 
   return (
@@ -130,6 +173,49 @@ export default function App() {
         )}
         {sessionError ? <Text accessibilityRole="alert">{sessionError}</Text> : null}
       </View>
+      <View style={styles.panel} testID="location-panel">
+        <Text style={styles.sectionTitle}>Ubicación del incidente</Text>
+        <Text>Busca una coincidencia o conserva una ubicación escrita manualmente.</Text>
+        <Text style={styles.detail}>
+          {locationClient.provider === 'open-meteo'
+            ? 'Proveedor: Open-Meteo Geocoding API (atribución CC BY 4.0).'
+            : 'Proveedor: doble de geocodificación local CampusOps.'}
+        </Text>
+        <TextInput
+          accessibilityLabel="Edificio, zona o referencia"
+          testID="manual-location-input"
+          value={manualLocation}
+          onChangeText={(value) => {
+            locationRequestSequence.current += 1;
+            setManualLocation(value);
+            setSelectedLocation(selectIncidentLocation(null, value));
+            setLocationStatus('La ubicación manual está disponible sin coordenadas.');
+            setLocationLoading(false);
+          }}
+          placeholder="Edificio, zona o referencia"
+          style={styles.locationInput}
+        />
+        <Pressable
+          accessibilityRole="button"
+          testID="geocode-location-button"
+          disabled={locationLoading}
+          onPress={() => void findIncidentLocation()}
+          style={[styles.actionCard, styles.locationButton]}
+        >
+          <Text style={styles.cardTitle}>{locationLoading ? 'Buscando ubicación...' : 'Consultar geocodificación'}</Text>
+        </Pressable>
+        {locationStatus ? <Text accessibilityRole="alert" testID="location-status">{locationStatus}</Text> : null}
+        <Text testID="selected-location">
+          Ubicación seleccionada ({selectedLocation.source}): {selectedLocation.label}
+        </Text>
+        {selectedLocation.source === 'provider' ? (
+          <Text style={styles.detail}>
+            Coordenadas recibidas del proveedor: {selectedLocation.latitude}, {selectedLocation.longitude}
+          </Text>
+        ) : (
+          <Text style={styles.detail}>Ubicación textual; no se asignaron coordenadas.</Text>
+        )}
+      </View>
       {selectedIncident ? (
         <View style={styles.panel}>
           <Pressable accessibilityRole="button" onPress={() => setSelectedIncident(null)}>
@@ -182,6 +268,8 @@ const styles = StyleSheet.create({
   coordinatorCard: { backgroundColor: '#fff7e6', borderColor: '#e5b85c' },
   infoCard: { backgroundColor: '#eef2f5', borderRadius: 12, gap: 5, padding: 16 },
   actionCard: { borderRadius: 12, borderWidth: 2, gap: 4, padding: 16 },
+  locationInput: { borderColor: '#9aa8b2', borderRadius: 8, borderWidth: 1, padding: 12 },
+  locationButton: { backgroundColor: '#eaf4ff', borderColor: '#72aee6' },
   renewCard: { backgroundColor: '#eaf4ff', borderColor: '#72aee6' },
   logoutCard: { backgroundColor: '#fff0f0', borderColor: '#df8585' },
   cardLabel: { color: '#40515c', fontSize: 13, fontWeight: '600' },

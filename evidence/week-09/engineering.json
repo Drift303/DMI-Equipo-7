@@ -1,30 +1,45 @@
 {
   "schemaVersion": 1,
   "week": 9,
-  "commitSha": "e706ea94602b4a4d6d05948171050f0180f39443",
-  "decision": "Como avance individual, implementé adaptadores puros para validar ubicaciones y planear reintentos acotados. El fallback conserva una etiqueta manual sin inventar coordenadas, y un POST solo puede reintentarse con identidad estable. Esta decisión no sustituye la integración del proveedor, el caché, la interfaz ni la reproducción real de respuesta perdida, que siguen pendientes.",
+  "commitSha": "fc96241eee0497db11ff321e06a2ec97ac33ab7b",
+  "decision": "La ubicación debe seguir siendo utilizable aunque Open-Meteo no encuentre una coincidencia o falle: validar coordenadas, cachear sólo resultados válidos y conservar siempre una referencia manual. Las escrituras se reintentan sólo ante fallos transitorios y con clave idempotente y cuerpo idénticos; agotado el límite, se informa incertidumbre en vez de declarar éxito.",
   "alternatives": [
-    "Aceptar cualquier respuesta del proveedor o inventar coordenadas cuando falle, lo cual podría guardar ubicación incorrecta.",
-    "Reintentar cualquier escritura sin límite ni identidad estable, lo cual puede duplicar efectos o saturar el servicio.",
-    "Validar resultados, conservar fallback textual y exigir una clave estable para reintentar POST, manteniendo explícitos los casos aún no integrados."
+    "Hacer que la app dependa directamente de Open-Meteo sin caché ni fallback; un timeout o una cuota impediría capturar la ubicación y podría repetir solicitudes.",
+    "Completar coordenadas o reutilizar una coordenada antigua cuando la respuesta sea incompleta; eso presentaría una ubicación inventada como dato verificado.",
+    "Usar adaptadores, caché temporal, texto manual y un doble local para fallos; limitar reintentos y exigir clave estable para cada POST repetible."
   ],
-  "tradeoff": "Beneficio: el adaptador puro rechaza datos inválidos y evita repetir un POST sin clave de idempotencia. Costo y limitación: aún no se conectó el flujo a un proveedor/caché ni se implementó backoff progresivo configurable; tampoco se ha comprobado el caso de respuesta perdida con el backend.",
-  "requirementIds": ["AC-02", "AC-03", "AC-04"],
+  "tradeoff": "La decisión mantiene la captura operativa, reduce consultas repetidas y evita duplicar el cierre, pero una coincidencia de geocodificación puede ser ambigua y la caché en memoria desaparece al cerrar la app. El servicio externo es sólo para uso no comercial dentro de sus límites; el doble local permite fallos reproducibles sin cuotas, pero no sustituye una prueba en un dispositivo real.",
+  "requirementIds": ["AC-01", "AC-02", "AC-03", "AC-04"],
   "verification": [
     {
-      "command": "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand course-tests/public/week-09.test.ts",
-      "result": "PASS: 1 suite, 4 pruebas aprobadas.",
-      "evidence": "Verifica los adaptadores puros: fallback de ubicación para entradas inválidas, Retry-After numérico, límite desde el intento 4 y clave estable para POST."
-    },
-    {
       "command": "npm run typecheck",
-      "result": "PASS: terminó con código 0.",
-      "evidence": "TypeScript no reportó errores en la implementación."
+      "result": "PASS",
+      "evidence": "TypeScript estricto terminó con código 0."
     },
     {
-      "command": "npx eslint src/course-evaluation/index.ts",
-      "result": "PASS: terminó con código 0.",
-      "evidence": "ESLint no reportó errores en el archivo modificado."
+      "command": "npx eslint App.tsx src/api/incidentCloudClient.ts src/api/locationClient.ts src/api/resilience.ts src/campusops/contracts.ts src/campusops/infrastructure/dependencies.ts src/course-evaluation/index.ts course-tests/smoke.test.tsx course-tests/week-09.location.test.ts course-tests/week-09.resilience.integration.test.ts",
+      "result": "PASS",
+      "evidence": "ESLint no reportó errores ni advertencias en los archivos cambiados."
+    },
+    {
+      "command": "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand course-tests/smoke.test.tsx course-tests/week-09.location.test.ts course-tests/week-09.resilience.integration.test.ts course-tests/public/week-09.test.ts course-tests/week-09.fallback.angel.test.ts",
+      "result": "PASS: 5 suites, 35 pruebas.",
+      "evidence": "Se verificaron interfaz manual, caché, resultados válidos/incompletos, desconexión, timeout, 429, backoff, límite, identidad POST y replay de cierre."
+    },
+    {
+      "command": "npm run backend:self-test",
+      "result": "PASS",
+      "evidence": "El doble local aprobó contratos, geocodificación, cierre con respuesta perdida, replay idempotente e historial sin duplicados."
+    },
+    {
+      "command": "GET https://geocoding-api.open-meteo.com/v1/search?name=CampusOps%20synthetic%20test%20building&count=1&language=en&format=json",
+      "result": "PASS: respuesta HTTP exitosa sin resultados.",
+      "evidence": "Consulta real con un término ficticio; la respuesta JSON sin results deja la ubicación manual activa y no aporta coordenadas."
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS",
+      "evidence": "No se reportaron errores de whitespace."
     }
   ]
 }

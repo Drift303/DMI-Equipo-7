@@ -10,12 +10,17 @@ export type IncidentWork = Readonly<{
   status: IncidentStatus;
 }>;
 
-export type IncidentLocation = Readonly<{
-  source: 'provider' | 'manual';
-  label: string;
-  latitude?: number;
-  longitude?: number;
-}>;
+export type IncidentLocation =
+  | Readonly<{
+    source: 'provider';
+    label: string;
+    latitude: number;
+    longitude: number;
+  }>
+  | Readonly<{
+    source: 'manual';
+    label: string;
+  }>;
 
 export type PendingIncidentOperation = Readonly<{
   operationId: string;

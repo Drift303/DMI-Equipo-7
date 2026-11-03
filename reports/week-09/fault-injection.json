@@ -1,43 +1,57 @@
 {
   "schemaVersion": 1,
   "week": 9,
-  "commitSha": "e706ea94602b4a4d6d05948171050f0180f39443",
-  "generatedAt": "2026-11-03T00:15:28Z",
+  "commitSha": "fc96241eee0497db11ff321e06a2ec97ac33ab7b",
+  "generatedAt": "2026-11-03T01:17:26.4147949Z",
   "checks": [
     {
-      "id": "location-fallback-public-contract",
+      "id": "open-meteo-synthetic-external-run",
       "status": "pass",
       "scenarioType": "boundary",
-      "command": "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand course-tests/public/week-09.test.ts course-tests/week-09.fallback.angel.test.ts",
-      "evidence": "La prueba de contrato y la suite de Ángel verifican que coordenadas finitas dentro de rango seleccionan provider y que null, 429 como respuesta, datos incompletos, tipos incorrectos, NaN, infinito y coordenadas fuera de rango seleccionan manual sin coordenadas. No simulan transporte HTTP."
+      "command": "GET https://geocoding-api.open-meteo.com/v1/search?name=CampusOps%20synthetic%20test%20building&count=1&language=en&format=json",
+      "evidence": "La consulta real con término ficticio devolvió JSON válido sin results. La app interpreta ausencia de coincidencias como ubicación manual; no se guardaron coordenadas."
+    },
+    {
+      "id": "controlled-provider-success-and-cache",
+      "status": "pass",
+      "scenarioType": "nominal",
+      "command": "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand course-tests/week-09.resilience.integration.test.ts",
+      "evidence": "El doble local respondió con etiqueta sintética y coordenadas 0,0. Dos consultas equivalentes generaron una sola solicitud HTTP."
+    },
+    {
+      "id": "incomplete-and-invalid-provider-data",
+      "status": "pass",
+      "scenarioType": "boundary",
+      "command": "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand course-tests/week-09.resilience.integration.test.ts course-tests/week-09.location.test.ts",
+      "evidence": "Las respuestas incompleta y con latitud fuera de rango conservan la etiqueta manual y no devuelven coordenadas; datos incompletos no se cachean."
+    },
+    {
+      "id": "provider-rate-limit",
+      "status": "pass",
+      "scenarioType": "failure",
+      "command": "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand course-tests/week-09.resilience.integration.test.ts course-tests/week-09.location.test.ts",
+      "evidence": "El doble HTTP devolvió 429 con Retry-After de 1 segundo; el adaptador conservó status y espera, agotó el límite configurado y dejó disponible la alternativa manual."
     },
     {
       "id": "provider-timeout",
-      "status": "not_applicable",
-      "scenarioType": "failure",
-      "command": "No ejecutado: no existe integración de timeout HTTP en selectIncidentLocation.",
-      "evidence": "La respuesta ausente se cubre en la función pura como entrada null; no se inyectó un timeout real ni se verificó la recuperación del adaptador HTTP."
-    },
-    {
-      "id": "provider-http-429",
-      "status": "not_applicable",
-      "scenarioType": "failure",
-      "command": "No ejecutado: no se hizo una solicitud a un proveedor que devolviera HTTP 429.",
-      "evidence": "La entrada {\"status\":429} se prueba como dato no válido y selecciona la ubicación manual; el código HTTP y Retry-After no se probaron en transporte real."
-    },
-    {
-      "id": "provider-incomplete-response",
       "status": "pass",
-      "scenarioType": "boundary",
-      "command": "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand course-tests/week-09.fallback.angel.test.ts",
-      "evidence": "Se comprueba que una respuesta sin coordenadas, con etiqueta vacía o con tipos y coordenadas inválidas recurre a la etiqueta manual y no devuelve coordenadas."
+      "scenarioType": "failure",
+      "command": "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand course-tests/week-09.resilience.integration.test.ts",
+      "evidence": "El doble lento excedió el timeout de 40 ms; el adaptador reportó timeout y la ubicación manual siguió disponible."
     },
     {
-      "id": "lost-response-after-commit",
-      "status": "not_applicable",
+      "id": "provider-disconnection",
+      "status": "pass",
       "scenarioType": "failure",
-      "command": "No ejecutado: falta reproducir timeout_after_commit contra el backend y repetir con la misma clave y payload.",
-      "evidence": "No se inyectó una respuesta perdida después de persistir ni se verificó la ausencia de operaciones duplicadas."
+      "command": "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand course-tests/week-09.location.test.ts",
+      "evidence": "Un fallo de transporte controlado se representó como desconexión; el flujo no generó coordenadas y usó el texto manual."
+    },
+    {
+      "id": "lost-close-response-after-commit",
+      "status": "pass",
+      "scenarioType": "failure",
+      "command": "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand course-tests/week-09.resilience.integration.test.ts",
+      "evidence": "El doble guardó el cierre y demoró la respuesta más que el timeout cliente. El replay devolvió duplicate=true con la misma clave y cuerpo; el historial persistido contiene exactamente un evento close."
     }
   ]
 }

@@ -1,64 +1,67 @@
-
 {
   "schemaVersion": 1,
   "week": 9,
-  "commitSha": "e706ea94602b4a4d6d05948171050f0180f39443",
-  "generatedAt": "2026-10-29T08:29:05Z",
+  "commitSha": "fc96241eee0497db11ff321e06a2ec97ac33ab7b",
+  "generatedAt": "2026-11-03T01:17:26.4147949Z",
   "checks": [
     {
-      "id": "retry-after-public-contract",
+      "id": "retry-after-precedence",
       "status": "pass",
       "scenarioType": "boundary",
-      "command": "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand course-tests/public/week-09.test.ts",
-      "evidence": "PASS: la prueba pública verifica que GET 429 con Retry-After=800 devuelve delayMs=800."
+      "command": "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand course-tests/public/week-09.test.ts course-tests/week-09.location.test.ts",
+      "evidence": "GET con Retry-After=800 ms planea exactamente 800 ms; cabecera HTTP-date también se convierte a milisegundos. Una espera mayor al máximo no se acorta: se detiene el reintento."
     },
     {
-      "id": "retry-limit-and-post-identity-public-contract",
+      "id": "progressive-backoff-and-attempt-limit",
       "status": "pass",
       "scenarioType": "failure",
-      "command": "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand course-tests/public/week-09.test.ts",
-      "evidence": "PASS: la prueba pública verifica que no se reintenta desde attempt 4, que un POST sin clave estable no se reintenta y que un POST con clave estable puede reintentarse ante timeout."
+      "command": "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand course-tests/week-09.location.test.ts",
+      "evidence": "Con base=100 ms y máximo=500 ms, los intentos 1, 2 y 3 esperan 100, 200 y 400 ms; desde intento 4 no se reintenta. Los límites son configurables y el máximo absoluto es cuatro intentos."
     },
     {
-      "id": "measured-backoff-and-duplicate-effects",
-      "status": "not_applicable",
+      "id": "post-requires-stable-identity",
+      "status": "pass",
       "scenarioType": "failure",
-      "command": "No ejecutado: todavía no hay backoff progresivo ni medición de duración de reintentos integrada.",
-      "evidence": "Los tests validan el valor delayMs de la función pura, no tiempos transcurridos ni repetición real de operaciones. La ausencia de duplicados tras una respuesta perdida no se ha verificado."
+      "command": "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand course-tests/public/week-09.test.ts course-tests/week-09.location.test.ts",
+      "evidence": "POST transitorio sin Idempotency-Key estable no se repite; con clave estable puede reintentarse y mantiene la identidad de operación."
+    },
+    {
+      "id": "measured-lost-response-replay",
+      "status": "pass",
+      "scenarioType": "failure",
+      "command": "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand course-tests/week-09.resilience.integration.test.ts",
+      "evidence": "La salida WEEK09_SANITIZED_RETRY_METRICS observó 2 intentos, 122 ms y 6 ms por intento, 10 ms de espera y 146 ms totales. No incluye clave, contenido ni identificador; el replay fue duplicate=true y dejó un único evento close."
     }
   ],
   "retryMetrics": [
     {
-      "scenario": "GET con respuesta 429",
+      "scenario": "GET con HTTP 429 y Retry-After",
       "attempt": 1,
       "retryAfterMs": 800,
       "retry": true,
-      "delayMs": 800,
-      "decision": "Se permite reintentar respetando Retry-After."
+      "delayMs": 800
     },
     {
-      "scenario": "Se alcanza el límite de intentos",
-      "attempt": 4,
-      "retryAfterMs": 800,
-      "retry": false,
-      "delayMs": 0,
-      "decision": "Se detienen los reintentos para evitar ciclos infinitos."
+      "scenario": "Backoff progresivo configurable",
+      "attemptDelaysMs": [100, 200, 400],
+      "maxDelayMs": 500,
+      "retryFromAttempt4": false
     },
     {
-      "scenario": "POST sin clave de idempotencia",
+      "scenario": "POST sin identidad estable",
       "attempt": 1,
-      "retryAfterMs": 800,
       "retry": false,
-      "delayMs": 0,
-      "decision": "Se rechaza el reintento para evitar operaciones duplicadas."
+      "requiresStableIdempotencyKey": true
     },
     {
-      "scenario": "POST con clave de idempotencia",
-      "attempt": 1,
-      "retryAfterMs": 800,
-      "retry": true,
-      "delayMs": 800,
-      "decision": "Se permite reintentar porque existe una clave de idempotencia."
+      "scenario": "Cierre con respuesta perdida después del commit",
+      "attempts": 2,
+      "attemptDurationsMs": [122, 6],
+      "retryDelaysMs": [10],
+      "totalDurationMs": 146,
+      "outcome": "success",
+      "replayWasDuplicate": true,
+      "storedCloseEvents": 1
     }
   ]
 }
