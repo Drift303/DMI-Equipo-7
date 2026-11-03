@@ -2,6 +2,9 @@ import { isValidIncident, type Incident, type IncidentRepository } from '../camp
 import type { IncidentCategory } from '../campusops/contracts';
 import type { JsonObject, ParseResult } from '../course-evaluation/contracts';
 import { parseRemoteResource } from '../course-evaluation';
+import type { RetryMetrics, RetryFailure } from './resilience';
+import { parseRetryAfterHeader, runWithRetry } from './resilience';
+import type { RetryPolicy } from '../course-evaluation';
 import { CampusSessionManager, UnauthorizedResponseError } from './sessionManager';
 
 export type IncidentCloudErrorKind = 'contract' | 'empty' | 'http' | 'network' | 'timeout';
@@ -9,12 +12,19 @@ export type IncidentCloudErrorKind = 'contract' | 'empty' | 'http' | 'network' |
 export class IncidentCloudError extends Error {
   readonly kind: IncidentCloudErrorKind;
   readonly status: number | null;
+  readonly retryAfterMs: number | null;
 
-  constructor(kind: IncidentCloudErrorKind, message: string, status: number | null = null) {
+  constructor(
+    kind: IncidentCloudErrorKind,
+    message: string,
+    status: number | null = null,
+    retryAfterMs: number | null = null,
+  ) {
     super(message);
     this.name = 'IncidentCloudError';
     this.kind = kind;
     this.status = status;
+    this.retryAfterMs = retryAfterMs;
   }
 }
 
@@ -25,12 +35,21 @@ type IncidentCloudClientOptions = Readonly<{
   timeoutMs?: number;
   fetchImpl?: typeof fetch;
   sessionManager?: CampusSessionManager;
+  retryPolicy?: Partial<RetryPolicy>;
+  sleep?: (delayMs: number) => Promise<void>;
+  onRetryMetrics?: (metrics: RetryMetrics) => void;
 }>;
 
 type CreateIncidentInput = Readonly<{
   category: IncidentCategory;
   description: string;
   location: string;
+}>;
+
+export type IncidentActionResult = Readonly<{
+  incident: Incident;
+  operationId: string;
+  duplicate: boolean;
 }>;
 
 const DEFAULT_URL = 'http://127.0.0.1:4310';
@@ -81,6 +100,9 @@ export class IncidentCloudClient implements IncidentRepository {
   private readonly timeoutMs: number;
   private readonly fetchImpl: typeof fetch;
   private readonly sessionManager: CampusSessionManager | undefined;
+  private readonly retryPolicy: Partial<RetryPolicy> | undefined;
+  private readonly sleep: ((delayMs: number) => Promise<void>) | undefined;
+  private readonly onRetryMetrics: ((metrics: RetryMetrics) => void) | undefined;
 
   constructor(options: IncidentCloudClientOptions = {}) {
     this.baseUrl = (options.baseUrl ?? process.env.EXPO_PUBLIC_COURSE_BACKEND_URL ?? DEFAULT_URL).replace(/\/$/, '');
@@ -89,6 +111,9 @@ export class IncidentCloudClient implements IncidentRepository {
     this.timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
     this.fetchImpl = options.fetchImpl ?? fetch.bind(globalThis);
     this.sessionManager = options.sessionManager;
+    this.retryPolicy = options.retryPolicy;
+    this.sleep = options.sleep;
+    this.onRetryMetrics = options.onRetryMetrics;
   }
 
   async list(): Promise<readonly Incident[]> {
@@ -121,6 +146,36 @@ export class IncidentCloudClient implements IncidentRepository {
     return mapRemoteIncident(this.parse(body.incident));
   }
 
+  async performAction(
+    incidentId: string,
+    input: Readonly<{ action: string; baseVersion: number; [key: string]: unknown }>,
+    idempotencyKey: string,
+  ): Promise<IncidentActionResult> {
+    if (idempotencyKey.trim().length < 8) {
+      throw new IncidentCloudError('contract', 'Idempotency-Key must contain at least 8 characters');
+    }
+
+    const body = JSON.stringify(input);
+    const response = await this.request(
+      `/v1/incidents/${encodeURIComponent(incidentId.trim())}/actions`,
+      { method: 'POST', headers: { 'Idempotency-Key': idempotencyKey }, body },
+    );
+    if (
+      !isJsonObject(response)
+      || !Object.hasOwn(response, 'incident')
+      || typeof response.operationId !== 'string'
+      || typeof response.duplicate !== 'boolean'
+    ) {
+      throw new IncidentCloudError('contract', 'Incident action contract mismatch');
+    }
+
+    return {
+      incident: mapRemoteIncident(this.parse(response.incident)),
+      operationId: response.operationId,
+      duplicate: response.duplicate,
+    };
+  }
+
   private parse(input: unknown): Extract<ParseResult, { ok: true }> {
     const parsed = parseRemoteResource(input);
     if (!parsed.ok) {
@@ -130,6 +185,32 @@ export class IncidentCloudClient implements IncidentRepository {
   }
 
   private async request(path: string, init: RequestInit = {}): Promise<unknown> {
+    const method = init.method?.toUpperCase() === 'POST' ? 'POST' : 'GET';
+    const idempotencyKey = new Headers(init.headers).get('Idempotency-Key') ?? undefined;
+    const result = await runWithRetry({
+      method,
+      ...(idempotencyKey !== undefined ? { idempotencyKey } : {}),
+      ...(this.retryPolicy !== undefined ? { policy: this.retryPolicy } : {}),
+      ...(this.sleep !== undefined ? { sleep: this.sleep } : {}),
+      ...(this.onRetryMetrics !== undefined ? { onMetrics: this.onRetryMetrics } : {}),
+      execute: () => this.requestOnce(path, init),
+      classifyError: (error): RetryFailure | null => {
+        if (!(error instanceof IncidentCloudError)) return null;
+        if (error.kind === 'timeout') return { status: 'timeout' };
+        if (error.kind === 'network') return { status: 'network' };
+        if (error.kind === 'http' && error.status !== null) {
+          return {
+            status: error.status,
+            ...(error.retryAfterMs !== null ? { retryAfterMs: error.retryAfterMs } : {}),
+          };
+        }
+        return null;
+      },
+    });
+    return result.value;
+  }
+
+  private async requestOnce(path: string, init: RequestInit = {}): Promise<unknown> {
     const requestWithToken = async (accessToken: string): Promise<unknown> => {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), this.timeoutMs);
@@ -149,7 +230,13 @@ export class IncidentCloudClient implements IncidentRepository {
           throw new UnauthorizedResponseError();
         }
         if (!response.ok) {
-          throw new IncidentCloudError('http', `Cloud request failed with ${response.status}`, response.status);
+          const retryAfter = parseRetryAfterHeader(response.headers?.get('Retry-After') ?? null);
+          throw new IncidentCloudError(
+            'http',
+            `Cloud request failed with ${response.status}`,
+            response.status,
+            retryAfter ?? null,
+          );
         }
         try {
           return await response.json();
@@ -158,10 +245,13 @@ export class IncidentCloudClient implements IncidentRepository {
         }
       } catch (error) {
         if (error instanceof IncidentCloudError || error instanceof UnauthorizedResponseError) throw error;
-        if (error instanceof DOMException && error.name === 'AbortError') {
+        if (error instanceof Error && error.name === 'AbortError') {
           throw new IncidentCloudError('timeout', 'Cloud request timed out');
         }
-        throw new IncidentCloudError('network', 'Cloud request failed');
+        if (error instanceof TypeError || (error instanceof Error && error.name === 'NetworkError')) {
+          throw new IncidentCloudError('network', 'Cloud request failed');
+        }
+        throw error;
       } finally {
         clearTimeout(timeout);
       }
