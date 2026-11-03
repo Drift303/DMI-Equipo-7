@@ -183,6 +183,8 @@ export function reducePermissionLifecycle(
 }
 
 export function selectIncidentLocation(provider: unknown, manualLabel: string): IncidentLocation {
+  const fallbackLabel = typeof manualLabel === 'string' ? manualLabel.trim() : '';
+
   if (provider && typeof provider === 'object' && !Array.isArray(provider)) {
     const candidate = provider as Record<string, unknown>;
     const label = typeof candidate.label === 'string' ? candidate.label.trim() : '';
@@ -198,5 +200,5 @@ export function selectIncidentLocation(provider: unknown, manualLabel: string): 
     }
   }
 
-  return { source: 'manual', label: manualLabel.trim() || 'Ubicación manual' };
+  return { source: 'manual', label: fallbackLabel || 'Ubicación manual' };
 }

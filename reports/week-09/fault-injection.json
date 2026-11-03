@@ -1,29 +1,43 @@
 {
   "schemaVersion": 1,
   "week": 9,
-  "commitSha": "62cdc966174da06519ab2d7974c02085f033699e",
-  "generatedAt": "2026-10-29T08:29:05Z",
+  "commitSha": "e706ea94602b4a4d6d05948171050f0180f39443",
+  "generatedAt": "2026-11-03T00:15:28Z",
   "checks": [
     {
       "id": "location-fallback-public-contract",
       "status": "pass",
       "scenarioType": "boundary",
-      "command": "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand course-tests/public/week-09.test.ts",
-      "evidence": "PASS en la prueba pública: una ubicación válida selecciona provider; null, respuesta incompleta y latitud fuera de rango seleccionan la etiqueta manual sin coordenadas. Esto prueba la función pura, no una falla HTTP real."
+      "command": "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand course-tests/public/week-09.test.ts course-tests/week-09.fallback.angel.test.ts",
+      "evidence": "La prueba de contrato y la suite de Ángel verifican que coordenadas finitas dentro de rango seleccionan provider y que null, 429 como respuesta, datos incompletos, tipos incorrectos, NaN, infinito y coordenadas fuera de rango seleccionan manual sin coordenadas. No simulan transporte HTTP."
+    },
+    {
+      "id": "provider-timeout",
+      "status": "not_applicable",
+      "scenarioType": "failure",
+      "command": "No ejecutado: no existe integración de timeout HTTP en selectIncidentLocation.",
+      "evidence": "La respuesta ausente se cubre en la función pura como entrada null; no se inyectó un timeout real ni se verificó la recuperación del adaptador HTTP."
+    },
+    {
+      "id": "provider-http-429",
+      "status": "not_applicable",
+      "scenarioType": "failure",
+      "command": "No ejecutado: no se hizo una solicitud a un proveedor que devolviera HTTP 429.",
+      "evidence": "La entrada {\"status\":429} se prueba como dato no válido y selecciona la ubicación manual; el código HTTP y Retry-After no se probaron en transporte real."
+    },
+    {
+      "id": "provider-incomplete-response",
+      "status": "pass",
+      "scenarioType": "boundary",
+      "command": "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand course-tests/week-09.fallback.angel.test.ts",
+      "evidence": "Se comprueba que una respuesta sin coordenadas, con etiqueta vacía o con tipos y coordenadas inválidas recurre a la etiqueta manual y no devuelve coordenadas."
     },
     {
       "id": "lost-response-after-commit",
       "status": "not_applicable",
       "scenarioType": "failure",
-      "command": "No ejecutado: falta reproducir timeout_after_commit contra el backend y verificar una repetición con la misma clave y payload.",
-      "evidence": "La respuesta perdida después de guardar y la ausencia de eventos duplicados aún no se han reproducido. No se afirma que este escenario haya pasado."
-    },
-    {
-      "id": "provider-http-failure-injection",
-      "status": "not_applicable",
-      "scenarioType": "failure",
-      "command": "No ejecutado: falta integrar el adaptador HTTP con los escenarios controlados de timeout, 429 y desconexión.",
-      "evidence": "La suite pública prueba valores de entrada del adaptador puro; no inyecta fallas de red ni valida caché o interfaz."
+      "command": "No ejecutado: falta reproducir timeout_after_commit contra el backend y repetir con la misma clave y payload.",
+      "evidence": "No se inyectó una respuesta perdida después de persistir ni se verificó la ausencia de operaciones duplicadas."
     }
   ]
 }

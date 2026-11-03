@@ -45,19 +45,25 @@
     {
       "studentId": "3523110231",
       "commitShas": [
-        "pendiente"
+        "e706ea94602b4a4d6d05948171050f0180f39443"
       ],
       "files": [
-        "pendiente"
+        "src/course-evaluation/index.ts",
+        "course-tests/week-09.fallback.angel.test.ts",
+        "reports/week-09/fault-injection.json",
+        "docs/resilience-policy.md"
       ],
       "tests": [
-        "pendiente"
+        "npm run typecheck",
+        "npx jest --no-watchman --cacheDirectory .jest-cache --runInBand course-tests/public/week-09.test.ts course-tests/week-09.fallback.angel.test.ts",
+        "python tools/course_public_evaluator.py --week 9 --mode public",
+        "git diff --check"
       ],
       "reviews": [],
-      "prediction": "pendiente",
-      "command": "pendiente",
-      "observedResult": "pendiente",
-      "explanation": "Pendiente: completar y registrar la contribución individual con archivos modificados, pruebas ejecutadas y resultados reales."
+      "prediction": "Esperaba que sólo una etiqueta no vacía y dos coordenadas numéricas finitas dentro de rango eligieran el proveedor; ante null, 429 como dato, respuesta incompleta o valores inválidos debía usarse la etiqueta manual sin coordenadas.",
+      "command": "npm run typecheck; npx jest --no-watchman --cacheDirectory .jest-cache --runInBand course-tests/public/week-09.test.ts course-tests/week-09.fallback.angel.test.ts; python tools/course_public_evaluator.py --week 9 --mode public; git diff --check",
+      "observedResult": "Typecheck aprobado; 2 suites y 19 pruebas aprobadas; el evaluador público aprobó sus 10 checks y git diff --check no reportó errores. Timeout HTTP real, respuesta HTTP 429 real y pérdida de respuesta posterior al guardado quedaron explícitamente como no ejecutados.",
+      "explanation": "Aseguré que la etiqueta manual tenga un valor válido incluso si llega vacía o con un tipo inesperado, agregué pruebas para entradas incompletas, incorrectas y límites de coordenadas, y documenté el comportamiento del proveedor, la ausencia de caché y los límites de la inyección de fallos. El commit técnico registrado contiene estos cambios; no afirmo que se hayan probado fallos de red reales."
     }
   ]
 }
